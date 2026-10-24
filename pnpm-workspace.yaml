@@ -1,0 +1,4 @@
+# Settings for this single-package repository.
+# Our own packages are trusted and released continuously: exempt them from pnpm's minimum-release-age policy.
+minimumReleaseAgeExclude:
+  - '@portal-poc/*'
