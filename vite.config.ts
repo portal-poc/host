@@ -64,12 +64,18 @@ const localRemotes = Object.fromEntries(
 
 type StandConfig = { env: string; remotes: Record<string, Record<string, unknown>> };
 
+const isStandConfig = (value: unknown): value is StandConfig =>
+  typeof value === 'object' && value !== null && 'remotes' in value && typeof value.remotes === 'object' && value.remotes !== null;
+
 const buildDevConfig = async (): Promise<StandConfig> => {
   const response = await fetch(`${INFRA_URL}/stands/${STAND}/config.json`);
   if (!response.ok) {
     throw new Error(`Stand "${STAND}" config not reachable at ${INFRA_URL} (HTTP ${response.status}). Run \`pnpm infra\`.`);
   }
-  const stand: StandConfig = await response.json();
+  const stand: unknown = await response.json();
+  if (!isStandConfig(stand)) {
+    throw new Error(`Stand "${STAND}" config has an unexpected shape.`);
+  }
   for (const [name, manifest] of Object.entries(localRemotes)) {
     const registered = stand.remotes[name];
     if (!registered) {
