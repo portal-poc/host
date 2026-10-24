@@ -43,16 +43,21 @@ const hostCompatPlugin = (): Plugin => ({
   },
 });
 
-// ---------- local development: stand config + developer overrides from the dev env ----------
+// ---------- local development: a deployed stand + the remotes I run, from my dev env ----------
 
 /**
- * `.env.development.local` (not committed):
- *   PORTAL_STAND=uat                                            # where "everything else" comes from (default: local)
- *   PORTAL_REMOTE_TASKS=http://localhost:5174/mf-manifest.json  # remotes I run locally
+ * `.env.development.local` (not committed) — the only place local development is described; the registry knows
+ * nothing about developer machines:
+ *   PORTAL_STAND=uat                                              # base config: a deployed stand, or `none`
+ *   PORTAL_REMOTE_TASKS=http://localhost:5174/mf-manifest.json    # remotes I run locally (registered or not)
+ *   PORTAL_REMOTE_REPORTS=http://localhost:5176/mf-manifest.json  # a new remote works before its first release
  * Only the local dev server does this; deployed hosts read the stand's /config.json and accept no overrides.
  */
 const devEnv = { ...loadEnv('development', appDir, 'PORTAL_'), ...process.env };
-const STAND = devEnv['PORTAL_STAND'] ?? 'local';
+const STAND = devEnv['PORTAL_STAND'] ?? 'uat';
+const NO_STAND = 'none';
+/** Remote config environment when nothing is deployed underneath (`PORTAL_STAND=none`). */
+const LOCAL_ENV = 'local';
 const INFRA_URL = devEnv['PORTAL_INFRA_URL'] ?? 'http://localhost:4400';
 
 const localRemotes = Object.fromEntries(
@@ -64,23 +69,42 @@ const localRemotes = Object.fromEntries(
 
 type StandConfig = { env: string; remotes: Record<string, Record<string, unknown>> };
 
-const isStandConfig = (value: unknown): value is StandConfig =>
-  typeof value === 'object' && value !== null && 'remotes' in value && typeof value.remotes === 'object' && value.remotes !== null;
+const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null;
 
-const buildDevConfig = async (): Promise<StandConfig> => {
+const isStandConfig = (value: unknown): value is StandConfig =>
+  isRecord(value) && typeof value['env'] === 'string' && isRecord(value['remotes']);
+
+const fetchStandConfig = async (): Promise<StandConfig> => {
+  if (STAND === NO_STAND) {
+    return { env: LOCAL_ENV, remotes: {} };
+  }
   const response = await fetch(`${INFRA_URL}/stands/${STAND}/config.json`);
   if (!response.ok) {
-    throw new Error(`Stand "${STAND}" config not reachable at ${INFRA_URL} (HTTP ${response.status}). Run \`pnpm infra\`.`);
+    throw new Error(`Stand "${STAND}" config not reachable at ${INFRA_URL} (HTTP ${response.status}). Run \`pnpm infra\` or set PORTAL_STAND=none.`);
   }
   const stand: unknown = await response.json();
   if (!isStandConfig(stand)) {
     throw new Error(`Stand "${STAND}" config has an unexpected shape.`);
   }
+  return stand;
+};
+
+/** A remote not registered on the stand yet: route = its name, scopes from its own config.json (dev server). */
+const describeUnregisteredRemote = async (name: string, manifest: string, env: string) => {
+  // Not every remote has one (legacy); a dev server then answers with its index.html.
+  const config: unknown = await fetch(new URL('config.json', manifest))
+    .then((response) => response.json())
+    .catch(() => null);
+  const environments = isRecord(config) && isRecord(config['environments']) ? config['environments'] : {};
+  const environment = environments[env] ?? environments[LOCAL_ENV];
+  const scopes = isRecord(environment) && Array.isArray(environment['scopes']) ? environment['scopes'] : [];
+  return { basePath: `/${name}`, scopes };
+};
+
+const buildDevConfig = async (): Promise<StandConfig> => {
+  const stand = await fetchStandConfig();
   for (const [name, manifest] of Object.entries(localRemotes)) {
-    const registered = stand.remotes[name];
-    if (!registered) {
-      throw new Error(`PORTAL_REMOTE_${name.toUpperCase()}: remote "${name}" is not registered on stand "${STAND}".`);
-    }
+    const registered = stand.remotes[name] ?? (await describeUnregisteredRemote(name, manifest, stand.env));
     stand.remotes[name] = { ...registered, version: 'local', manifest, devServer: true, bridgeManifest: undefined };
   }
   return stand;

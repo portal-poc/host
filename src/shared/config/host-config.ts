@@ -6,7 +6,7 @@ const remoteEntrySchema = z.object({
   bridgeManifest: z.url().optional(),
   basePath: z.string().startsWith('/'),
   scopes: z.array(z.string()),
-  /** Served by a local Vite dev server (developer's .env.development.local or the local stand). */
+  /** Set only by the local dev server for remotes from .env.development.local: the host attaches to their HMR. */
   devServer: z.boolean().optional(),
   /** Navigation label (owned by the host team in the registry, like basePath). */
   title: z.string().optional(),

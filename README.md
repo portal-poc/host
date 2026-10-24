@@ -20,12 +20,13 @@ All repositories side by side: `~/projects/portal-poc/{platform,registry,host,ta
 
 ```sh
 pnpm install
-pnpm dev            # :5173 — remotes from the stand in .env.development.local (default: local)
+pnpm dev            # :5173 — remotes as registered on PORTAL_STAND (default: uat)
 ```
 
-Work on a remote locally: copy `.env.development.local.example` to `.env.development.local`
-(`PORTAL_STAND=uat`, `PORTAL_REMOTE_TASKS=http://localhost:5174/mf-manifest.json`), start `pnpm infra` in
-`platform`, the remote's `pnpm dev`, then `pnpm dev` here. Everything not overridden runs the version registered on
-that stand.
+Work on remotes locally: copy `.env.development.local.example` to `.env.development.local`, list the remotes you run
+(`PORTAL_REMOTE_TASKS=http://localhost:5174/mf-manifest.json`), start `pnpm infra` in `platform`, the remotes'
+`pnpm dev`, then `pnpm dev` here. Everything else runs the version registered on `PORTAL_STAND`. A remote that is not
+registered anywhere yet works the same way (route `/<name>`, scopes from its `config.json`); `PORTAL_STAND=none`
+gives only your local remotes, without infra. Local development never touches the registry.
 
 Deploy to the PoC uat stand: `pnpm build`, then in `platform`: `pnpm deploy:host uat`.
