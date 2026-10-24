@@ -17,7 +17,7 @@
     "@module-federation/bridge-react": "^2.9.2",
     "@module-federation/runtime": "2.9.2",
     "@mui/joy": "5.0.0-beta.52",
-    "@portal-poc/ds": "^1.0.0",
+    "@portal-poc/ds": "^1.0.2",
     "@portal-poc/mf-shared": "^1.0.0",
     "@portal-poc/platform-contract": "^1.0.0",
     "@portal-poc/platform-runtime": "^1.0.0",
