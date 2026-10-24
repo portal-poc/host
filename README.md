@@ -28,5 +28,7 @@ Work on remotes locally: copy `.env.development.local.example` to `.env.developm
 `pnpm dev`, then `pnpm dev` here. Everything else runs the version registered on `PORTAL_STAND`. A remote that is not
 registered anywhere yet works the same way (route `/<name>`, scopes from its `config.json`); `PORTAL_STAND=none`
 gives only your local remotes, without infra. Local development never touches the registry.
+The dev server validates these variables at start (`build/dev-env.ts`): unknown `PORTAL_*` keys, non-manifest URLs
+and bad stand names stop it with the offending line; a remote missing on the stand is reported as a warning.
 
 Deploy to the PoC uat stand: `pnpm build`, then in `platform`: `pnpm deploy:host uat`.

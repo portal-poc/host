@@ -4,6 +4,8 @@ import type { HostCompat } from '@portal-poc/mf-shared';
 import { createHostViteConfig } from '@portal-poc/vite-config';
 import { loadEnv } from 'vite';
 import type { Plugin } from 'vite';
+import { NO_STAND, parseDevEnv } from './build/dev-env.ts';
+import type { DevEnv } from './build/dev-env.ts';
 
 const PORT = 5173;
 const appDir = new URL('.', import.meta.url).pathname;
@@ -53,19 +55,8 @@ const hostCompatPlugin = (): Plugin => ({
  *   PORTAL_REMOTE_REPORTS=http://localhost:5176/mf-manifest.json  # a new remote works before its first release
  * Only the local dev server does this; deployed hosts read the stand's /config.json and accept no overrides.
  */
-const devEnv = { ...loadEnv('development', appDir, 'PORTAL_'), ...process.env };
-const STAND = devEnv['PORTAL_STAND'] ?? 'uat';
-const NO_STAND = 'none';
 /** Remote config environment when nothing is deployed underneath (`PORTAL_STAND=none`). */
 const LOCAL_ENV = 'local';
-const INFRA_URL = devEnv['PORTAL_INFRA_URL'] ?? 'http://localhost:4400';
-
-const localRemotes = Object.fromEntries(
-  Object.entries(devEnv).flatMap(([key, value]) => {
-    const name = /^PORTAL_REMOTE_([A-Z0-9_]+)$/.exec(key)?.[1];
-    return name && value ? [[name.toLowerCase(), value]] : [];
-  }),
-);
 
 type StandConfig = { env: string; remotes: Record<string, Record<string, unknown>> };
 
@@ -74,19 +65,25 @@ const isRecord = (value: unknown): value is Record<string, unknown> => typeof va
 const isStandConfig = (value: unknown): value is StandConfig =>
   isRecord(value) && typeof value['env'] === 'string' && isRecord(value['remotes']);
 
-const fetchStandConfig = async (): Promise<StandConfig> => {
-  if (STAND === NO_STAND) {
+const fetchStandConfig = async ({ stand, infraUrl }: DevEnv): Promise<StandConfig> => {
+  if (stand === NO_STAND) {
     return { env: LOCAL_ENV, remotes: {} };
   }
-  const response = await fetch(`${INFRA_URL}/stands/${STAND}/config.json`);
+  const response = await fetch(`${infraUrl}/stands/${stand}/config.json`).catch(() => null);
+  if (!response) {
+    throw new Error(`Infra is not running at ${infraUrl}: start \`pnpm infra\` in platform, or set PORTAL_STAND=none.`);
+  }
   if (!response.ok) {
-    throw new Error(`Stand "${STAND}" config not reachable at ${INFRA_URL} (HTTP ${response.status}). Run \`pnpm infra\` or set PORTAL_STAND=none.`);
+    const known = await fetch(`${infraUrl}/stands.json`)
+      .then((list) => list.json() as Promise<string[]>)
+      .catch(() => []);
+    throw new Error(`PORTAL_STAND=${stand}: no such deployed stand (known: ${[...known, NO_STAND].join(', ')}).`);
   }
-  const stand: unknown = await response.json();
-  if (!isStandConfig(stand)) {
-    throw new Error(`Stand "${STAND}" config has an unexpected shape.`);
+  const config: unknown = await response.json();
+  if (!isStandConfig(config)) {
+    throw new Error(`Stand "${stand}" config has an unexpected shape.`);
   }
-  return stand;
+  return config;
 };
 
 /** A remote not registered on the stand yet: route = its name, scopes from its own config.json (dev server). */
@@ -101,21 +98,35 @@ const describeUnregisteredRemote = async (name: string, manifest: string, env: s
   return { basePath: `/${name}`, scopes };
 };
 
-const buildDevConfig = async (): Promise<StandConfig> => {
-  const stand = await fetchStandConfig();
-  for (const [name, manifest] of Object.entries(localRemotes)) {
-    const registered = stand.remotes[name] ?? (await describeUnregisteredRemote(name, manifest, stand.env));
-    stand.remotes[name] = { ...registered, version: 'local', manifest, devServer: true, bridgeManifest: undefined };
+const buildDevConfig = async (devEnv: DevEnv, warn: (message: string) => void): Promise<StandConfig> => {
+  const config = await fetchStandConfig(devEnv);
+  const registered = Object.keys(config.remotes).join(', ') || 'nothing';
+  for (const [name, manifest] of Object.entries(devEnv.remotes)) {
+    let entry = config.remotes[name];
+    if (!entry) {
+      warn(`"${name}" is not registered on ${devEnv.stand} (registered: ${registered}): added as a new remote at /${name}.`);
+      entry = await describeUnregisteredRemote(name, manifest, config.env);
+    }
+    config.remotes[name] = { ...entry, version: 'local', manifest, devServer: true, bridgeManifest: undefined };
   }
-  return stand;
+  return config;
 };
 
 const devConfigPlugin = (): Plugin => ({
   name: 'portal-dev-config',
   apply: 'serve',
   configureServer(server) {
+    // Shell variables override the file. Validated once at start: a typo stops the dev server with the offending key.
+    const devEnv = parseDevEnv({ ...loadEnv('development', appDir, 'PORTAL_'), ...process.env });
+    const warned = new Set<string>();
+    const warnOnce = (message: string) => {
+      if (!warned.has(message)) {
+        warned.add(message);
+        server.config.logger.warn(`[portal] ${message}`);
+      }
+    };
     server.middlewares.use('/config.json', (_request, response) => {
-      buildDevConfig()
+      buildDevConfig(devEnv, warnOnce)
         .then((config) => {
           response.setHeader('Content-Type', 'application/json');
           response.end(JSON.stringify(config));

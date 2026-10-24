@@ -3,6 +3,10 @@
   "include": [
     "vite.config.ts",
     "vitest.config.ts",
-    "steiger.config.ts"
-  ]
+    "steiger.config.ts",
+    "build"
+  ],
+  "compilerOptions": {
+    "allowImportingTsExtensions": true
+  }
 }
