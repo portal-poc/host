@@ -1,8 +1,8 @@
 import { createRemoteAppComponent } from '@module-federation/bridge-react/base';
-import { loadRemote, registerRemotes } from '@module-federation/runtime';
+import { loadRemote, loadShare, registerRemotes } from '@module-federation/runtime';
 import { createElement } from 'react';
 import type { ComponentType } from 'react';
-import { describeConflict, findSingletonConflicts, findToolingProblem, toBridgeRemoteName } from '@portal/mf-shared';
+import { describeConflict, findSingletonConflicts, findToolingProblem, SINGLETONS, toBridgeRemoteName } from '@portal/mf-shared';
 import type { ManifestSharedEntry } from '@portal/mf-shared';
 import type { PlatformContract } from '@portal/platform-contract';
 import { isContractVersionSupported, isSameReactInstance } from '@portal/platform-runtime';
@@ -28,6 +28,16 @@ class IncompatibleRemoteError extends Error {
     this.name = 'IncompatibleRemoteError';
   }
 }
+
+/**
+ * MF never replaces a singleton version that is already LOADED, but for a singleton nobody has loaded yet the newest
+ * registered copy wins ("version-first") — possibly a remote's own copy. Loading every contract singleton from the
+ * host before any remote registers makes "the host provides the singletons" a guarantee rather than a side effect of
+ * import order (verified: a remote shipping React 19.3.99 still runs on the host's 19.3.1).
+ */
+export const loadHostSingletons = async (): Promise<void> => {
+  await Promise.all(Object.keys(SINGLETONS).map((name) => loadShare(name)));
+};
 
 /** Main builds are registered up front; bridge variants only when needed. URLs come from the stand registry. */
 export const registerConfiguredRemotes = () => {

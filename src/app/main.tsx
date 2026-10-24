@@ -7,13 +7,14 @@ import { PlatformProvider } from '@portal/platform-runtime';
 import { getHostQueryClient } from '@/shared/api';
 import { loadHostConfig } from '@/shared/config';
 import { getHostPlatform } from '@/shared/platform';
-import { registerConfiguredRemotes } from '@/shared/remotes';
+import { loadHostSingletons, registerConfiguredRemotes } from '@/shared/remotes';
 import { createHostRouter } from './router';
 // Side-effect import: global view-transition CSS of the host.
 // oxlint-disable-next-line import/no-unassigned-import
 import './view-transitions.css';
 
 await loadHostConfig();
+await loadHostSingletons();
 registerConfiguredRemotes();
 const router = createHostRouter();
 
