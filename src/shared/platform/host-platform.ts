@@ -21,7 +21,7 @@ export const hostAuth = createMockPlatformAuth({
   tokenTtlMs: Number(readFlag(DEMO_KEYS.tokenTtlMs) ?? 10 * 60 * 1000),
 });
 
-export const hostEvents = createPlatformEventBus();
+const hostEvents = createPlatformEventBus();
 
 export const devtoolsRegistry = isDevtoolsEnabled(import.meta.env.DEV) ? createDevtoolsRegistry() : null;
 

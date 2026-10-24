@@ -4,7 +4,6 @@ export {
   devtoolsRegistry,
   getHostPlatform,
   hostAuth,
-  hostEvents,
   setHostNavigate,
 } from './host-platform';
 export { telemetryLog } from './telemetry-log';

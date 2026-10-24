@@ -17,7 +17,7 @@ export type LoadedRemote = {
   Component: ComponentType<RemoteProps>;
 };
 
-export class IncompatibleRemoteError extends Error {
+class IncompatibleRemoteError extends Error {
   constructor(name: string, version: unknown, range: ContractVersionRange) {
     super(
       `Remote "${name}" implements platform contract v${String(version)}, the host supports ` +

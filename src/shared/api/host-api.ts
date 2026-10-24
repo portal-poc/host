@@ -3,7 +3,7 @@ import { createHttpClient, createPortalQueryClient, createQueryDevtoolsMount } f
 import { devtoolsRegistry, getHostPlatform } from '../platform';
 import { fakeHostFetch } from './fake-backend';
 
-export const HOST_BFF_SCOPES = ['api://host-bff/Host.Read'] as const;
+const HOST_BFF_SCOPES = ['api://host-bff/Host.Read'] as const;
 
 let http: ReturnType<typeof createHttpClient> | null = null;
 
