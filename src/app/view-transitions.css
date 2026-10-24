@@ -1,0 +1,18 @@
+/* Host-owned route transitions (150–250 ms). Remotes only animate local changes. */
+::view-transition-old(.nav-forward) { animation: 160ms ease-in both host-out-left; }
+::view-transition-new(.nav-forward) { animation: 220ms ease-out both host-in-right; }
+::view-transition-old(.nav-back) { animation: 160ms ease-in both host-out-right; }
+::view-transition-new(.nav-back) { animation: 220ms ease-out both host-in-left; }
+
+@keyframes host-out-left { to { opacity: 0; transform: translateX(-24px); } }
+@keyframes host-out-right { to { opacity: 0; transform: translateX(24px); } }
+@keyframes host-in-right { from { opacity: 0; transform: translateX(24px); } }
+@keyframes host-in-left { from { opacity: 0; transform: translateX(-24px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

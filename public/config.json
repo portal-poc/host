@@ -1,0 +1,15 @@
+{
+  "env": "local",
+  "remotes": {
+    "tasks": {
+      "entry": "http://localhost:5174/remoteEntry.js",
+      "basePath": "/tasks",
+      "scopes": ["api://tasks-bff/Tasks.ReadWrite"]
+    },
+    "legacy": {
+      "entry": "http://localhost:5175/remoteEntry.js",
+      "basePath": "/legacy",
+      "scopes": ["api://legacy-bff/Legacy.Read"]
+    }
+  }
+}
