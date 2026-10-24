@@ -8,6 +8,7 @@ import { devtoolsRegistry, getHostPlatform, hostAuth } from '@/shared/platform';
 import { QueryBoundary } from '@/shared/ui';
 import { DemoPanel } from './DemoPanel';
 import { HostNavLink } from './HostNavLink';
+import { RemotesInfo } from './RemotesInfo';
 
 const signIn = () => {
   void hostAuth.requestInteraction([]);
@@ -54,7 +55,7 @@ export const Layout = () => {
         )}
       </Box>
       <DemoPanel />
-      {devtoolsRegistry && <DevtoolsToolbar registry={devtoolsRegistry} />}
+      {devtoolsRegistry && <DevtoolsToolbar registry={devtoolsRegistry} extra={<RemotesInfo />} />}
     </Box>
   );
 };

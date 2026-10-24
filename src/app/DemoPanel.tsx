@@ -1,6 +1,7 @@
 import { useState, useSyncExternalStore } from 'react';
 import { Button, Checkbox, Option, Select, Sheet, Stack, Typography } from '@portal/ds';
 import { DEMO_KEYS, hostAuth, readFlag, telemetryLog, writeFlag } from '@/shared/platform';
+import { RemotesInfo } from './RemotesInfo';
 
 const DELAYS = ['100', '400', '800', '3000'];
 const TTLS = [
@@ -90,7 +91,7 @@ export const DemoPanel = () => {
         </Select>
         <Checkbox
           size="sm"
-          label="Force bridge mode for tasks (reload)"
+          label="Force bridge build for tasks (reload)"
           checked={readFlag(DEMO_KEYS.forceBridge) === 'tasks'}
           onChange={(event) => reloadWith(DEMO_KEYS.forceBridge, event.target.checked ? 'tasks' : null)}
         />
@@ -100,6 +101,7 @@ export const DemoPanel = () => {
           checked={readFlag(DEMO_KEYS.incompatibleContract) === '1'}
           onChange={(event) => reloadWith(DEMO_KEYS.incompatibleContract, event.target.checked ? '1' : null)}
         />
+        <RemotesInfo />
         <Typography level="body-xs">Telemetry errors:</Typography>
         {errors.length === 0 && <Typography level="body-xs">—</Typography>}
         {errors.map((record) => (

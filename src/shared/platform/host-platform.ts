@@ -8,7 +8,7 @@ import {
   createRemoteAuth,
   isDevtoolsEnabled,
 } from '@portal/platform-runtime';
-import { getHostConfig, getRemoteConfig } from '../config';
+import { getHostConfig, getRemoteEntry } from '../config';
 import { DEMO_KEYS, readFlag } from './demo-flags';
 import { telemetryLog } from './telemetry-log';
 
@@ -57,15 +57,16 @@ export const getHostPlatform = (): PlatformContract => {
 
 const remotePlatforms = new Map<string, PlatformContract>();
 
-/** Stable per remote + mode: the contract a remote receives as a prop. */
-export const buildPlatformForRemote = (name: string, mode: 'integrated' | 'bridge'): PlatformContract => {
-  const key = `${name}:${mode}`;
+/** Stable per remote + version + mode: the contract a remote receives as a prop. */
+export const buildPlatformForRemote = (name: string, version: string, mode: 'integrated' | 'bridge'): PlatformContract => {
+  const key = `${name}@${version}:${mode}`;
   const cached = remotePlatforms.get(key);
   if (cached) {
     return cached;
   }
-  const remote = getRemoteConfig(name);
-  const telemetry = createTelemetry(name);
+  const remote = getRemoteEntry(name);
+  // Every telemetry record carries the exact remote version that produced it.
+  const telemetry = createTelemetry(`${name}@${version}`);
   const platform: PlatformContract = {
     ...buildBase(name),
     telemetry,
