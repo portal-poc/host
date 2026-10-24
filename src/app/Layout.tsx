@@ -4,6 +4,7 @@ import { Box, Button, Sheet, Spinner, Stack, Typography } from '@portal-poc/ds';
 import { DevtoolsToolbar, useClearCacheOnAccountChange } from '@portal-poc/platform-runtime';
 import { useInvalidateBookmarksOnEvent } from '@/pages/home';
 import { getHostHttp, getHostQueryClient } from '@/shared/api';
+import { getRemoteSections } from '@/shared/config';
 import { devtoolsRegistry, getHostPlatform, hostAuth } from '@/shared/platform';
 import { QueryBoundary } from '@/shared/ui';
 import { DemoPanel } from './DemoPanel';
@@ -37,8 +38,11 @@ export const Layout = () => {
         <Stack direction="row" gap={2} alignItems="center">
           <Typography level="title-lg">Portal</Typography>
           <HostNavLink to="/">Home</HostNavLink>
-          <HostNavLink to="/tasks">Tasks</HostNavLink>
-          <HostNavLink to="/legacy">Legacy</HostNavLink>
+          {getRemoteSections().map((section) => (
+            <HostNavLink key={section.name} to={section.basePath}>
+              {section.title}
+            </HostNavLink>
+          ))}
           {isNavigating && <Spinner size="sm" label="Navigating" />}
           <Typography level="body-sm" sx={{ ml: 'auto' }}>
             {account?.displayName ?? 'Signed out'}

@@ -8,6 +8,8 @@ const remoteEntrySchema = z.object({
   scopes: z.array(z.string()),
   /** Served by a local Vite dev server (developer's .env.development.local or the local stand). */
   devServer: z.boolean().optional(),
+  /** Navigation label (owned by the host team in the registry, like basePath). */
+  title: z.string().optional(),
 });
 
 /** `/config.json` of the stand = the registry entries for this stand (built by the config deploy job). */
@@ -47,3 +49,18 @@ export const getRemoteEntry = (name: string): RemoteEntry => {
 };
 
 export const getRemoteNames = (): string[] => Object.keys(getHostConfig().remotes);
+
+type RemoteSection = { name: string; basePath: string; title: string };
+
+const toTitle = (name: string) => `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+
+/**
+ * Routes, navigation and section order come from the stand config (= the registry): adding a remote is a registry
+ * change, never a host code change or redeploy.
+ */
+export const getRemoteSections = (): RemoteSection[] =>
+  Object.entries(getHostConfig().remotes).map(([name, entry]) => ({
+    name,
+    basePath: entry.basePath,
+    title: entry.title ?? toTitle(name),
+  }));

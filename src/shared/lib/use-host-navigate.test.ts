@@ -10,6 +10,6 @@ describe('getNavigationDirection', () => {
     ['/', '/tasks/3', 'nav-forward'],
     ['/tasks', '/tasks/3', 'nav-forward'],
   ])('%s → %s is %s', (from, to, expected) => {
-    expect(getNavigationDirection(from, to)).toBe(expected);
+    expect(getNavigationDirection(from, to, ['/', '/tasks', '/legacy'])).toBe(expected);
   });
 });

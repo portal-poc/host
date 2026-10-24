@@ -1,18 +1,17 @@
 import { addTransitionType, startTransition } from 'react';
 import { useLocation, useNavigate } from 'react-router';
-
-const SECTIONS = ['/', '/tasks', '/legacy'];
+import { getRemoteSections } from '../config';
 
 type Direction = 'nav-forward' | 'nav-back';
 
-const sectionIndex = (path: string): number =>
-  SECTIONS.findLastIndex((section) => (section === '/' ? path === '/' : path.startsWith(section)));
+const sectionIndex = (sections: readonly string[], path: string): number =>
+  sections.findLastIndex((section) => (section === '/' ? path === '/' : path.startsWith(section)));
 
 const isDescendant = (from: string, to: string) => to.startsWith(from) && to.length > from.length;
 
-/** Deeper or later section → forward; otherwise back. */
-export const getNavigationDirection = (from: string, to: string): Direction =>
-  sectionIndex(to) > sectionIndex(from) || isDescendant(from, to) ? 'nav-forward' : 'nav-back';
+/** Deeper or later section (order of the stand config) → forward; otherwise back. */
+export const getNavigationDirection = (from: string, to: string, sections: readonly string[]): Direction =>
+  sectionIndex(sections, to) > sectionIndex(sections, from) || isDescendant(from, to) ? 'nav-forward' : 'nav-back';
 
 /**
  * Host-owned route transitions with a direction type. React Router v8 updates its state after an await inside its
@@ -24,7 +23,8 @@ export const useHostNavigate = () => {
   const { pathname } = useLocation();
 
   return (to: string) => {
-    const direction = getNavigationDirection(pathname, to);
+    const sections = ['/', ...getRemoteSections().map((section) => section.basePath)];
+    const direction = getNavigationDirection(pathname, to, sections);
     startTransition(async () => {
       addTransitionType(direction);
       await navigate(to);
