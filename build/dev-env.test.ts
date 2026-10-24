@@ -4,8 +4,8 @@ import { parseDevEnv, toRemoteName } from './dev-env';
 const TASKS = 'http://localhost:5174/mf-manifest.json';
 
 describe('parseDevEnv', () => {
-  it('defaults to uat and the local infra', () => {
-    expect(parseDevEnv({})).toEqual({ stand: 'uat', infraUrl: 'http://localhost:4400', remotes: {} });
+  it('defaults to dev3 and the local infra', () => {
+    expect(parseDevEnv({})).toEqual({ stand: 'dev3', infraUrl: 'http://localhost:4400', remotes: {} });
   });
 
   it('collects local remotes under their registry names', () => {

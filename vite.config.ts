@@ -50,7 +50,7 @@ const hostCompatPlugin = (): Plugin => ({
 /**
  * `.env.development.local` (not committed) — the only place local development is described; the registry knows
  * nothing about developer machines:
- *   PORTAL_STAND=uat                                              # base config: a deployed stand, or `none`
+ *   PORTAL_STAND=dev3                                             # base config: a deployed stand, or `none`
  *   PORTAL_REMOTE_TASKS=http://localhost:5174/mf-manifest.json    # remotes I run locally (registered or not)
  *   PORTAL_REMOTE_REPORTS=http://localhost:5176/mf-manifest.json  # a new remote works before its first release
  * Only the local dev server does this; deployed hosts read the stand's /config.json and accept no overrides.

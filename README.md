@@ -20,7 +20,7 @@ All repositories side by side: `~/projects/portal-poc/{platform,registry,host,ta
 
 ```sh
 pnpm install
-pnpm dev            # :5173 — remotes as registered on PORTAL_STAND (default: uat)
+pnpm dev            # :5173 — remotes as registered on PORTAL_STAND (default: dev3)
 ```
 
 Work on remotes locally: copy `.env.development.local.example` to `.env.development.local`, list the remotes you run
@@ -31,4 +31,4 @@ gives only your local remotes, without infra. Local development never touches th
 The dev server validates these variables at start (`build/dev-env.ts`): unknown `PORTAL_*` keys, non-manifest URLs
 and bad stand names stop it with the offending line; a remote missing on the stand is reported as a warning.
 
-Deploy to the PoC uat stand: `pnpm build`, then in `platform`: `pnpm deploy:host uat`.
+Deploy to the PoC stands: `pnpm build`, then in `platform`: `pnpm deploy:host dev3` (dev2, dev1, tst).
