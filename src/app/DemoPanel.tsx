@@ -1,5 +1,5 @@
 import { useState, useSyncExternalStore } from 'react';
-import { Button, Checkbox, Option, Select, Sheet, Stack, Typography } from '@portal/ds';
+import { Button, Checkbox, Option, Select, Sheet, Stack, Typography } from '@portal-poc/ds';
 import { DEMO_KEYS, hostAuth, readFlag, telemetryLog, writeFlag } from '@/shared/platform';
 import { RemotesInfo } from './RemotesInfo';
 

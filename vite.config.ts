@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
-import { SINGLETONS, SUPPORTED_BUILD_TOOLING, SUPPORTED_CONTRACT_VERSIONS } from '@portal/mf-shared';
-import type { HostCompat } from '@portal/mf-shared';
-import { createHostViteConfig } from '@portal/vite-config';
+import { SINGLETONS, SUPPORTED_BUILD_TOOLING, SUPPORTED_CONTRACT_VERSIONS } from '@portal-poc/mf-shared';
+import type { HostCompat } from '@portal-poc/mf-shared';
+import { createHostViteConfig } from '@portal-poc/vite-config';
 import { loadEnv } from 'vite';
 import type { Plugin } from 'vite';
 

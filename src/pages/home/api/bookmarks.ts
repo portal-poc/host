@@ -1,8 +1,8 @@
 import { queryOptions, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { z } from 'zod';
-import type { HttpClient } from '@portal/platform-runtime';
-import { usePlatformEvents } from '@portal/platform-runtime';
+import type { HttpClient } from '@portal-poc/platform-runtime';
+import { usePlatformEvents } from '@portal-poc/platform-runtime';
 
 const bookmarkSchema = z.object({ taskId: z.string(), title: z.string(), path: z.string(), source: z.string() });
 

@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import { Outlet, useNavigation } from 'react-router';
-import { Box, Button, Sheet, Spinner, Stack, Typography } from '@portal/ds';
-import { DevtoolsToolbar, useClearCacheOnAccountChange } from '@portal/platform-runtime';
+import { Box, Button, Sheet, Spinner, Stack, Typography } from '@portal-poc/ds';
+import { DevtoolsToolbar, useClearCacheOnAccountChange } from '@portal-poc/platform-runtime';
 import { useInvalidateBookmarksOnEvent } from '@/pages/home';
 import { getHostHttp, getHostQueryClient } from '@/shared/api';
 import { devtoolsRegistry, getHostPlatform, hostAuth } from '@/shared/platform';

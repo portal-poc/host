@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react';
-import { Chip, Stack, Typography } from '@portal/ds';
+import { Chip, Stack, Typography } from '@portal-poc/ds';
 import { getHostConfig } from '@/shared/config';
 import { remoteStatusStore } from '@/shared/remotes';
 

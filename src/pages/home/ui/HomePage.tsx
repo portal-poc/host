@@ -1,4 +1,4 @@
-import { Card, Stack, Typography } from '@portal/ds';
+import { Card, Stack, Typography } from '@portal-poc/ds';
 import { QueryBoundary } from '@/shared/ui';
 import { BookmarksWidget } from './BookmarksWidget';
 

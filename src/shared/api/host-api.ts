@@ -1,5 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query';
-import { createHttpClient, createPortalQueryClient, createQueryDevtoolsMount } from '@portal/platform-runtime';
+import { createHttpClient, createPortalQueryClient, createQueryDevtoolsMount } from '@portal-poc/platform-runtime';
 import { devtoolsRegistry, getHostPlatform } from '../platform';
 import { fakeHostFetch } from './fake-backend';
 

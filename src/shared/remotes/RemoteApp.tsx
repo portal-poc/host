@@ -1,5 +1,5 @@
 import { use } from 'react';
-import { AsyncBoundary } from '@portal/ds';
+import { AsyncBoundary } from '@portal-poc/ds';
 import { getRemoteEntry } from '../config';
 import { buildPlatformForRemote } from '../platform';
 import { loadRemoteEntry } from './load-remote-entry';

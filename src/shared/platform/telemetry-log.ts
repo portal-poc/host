@@ -1,4 +1,4 @@
-import type { TelemetryRecord } from '@portal/platform-runtime';
+import type { TelemetryRecord } from '@portal-poc/platform-runtime';
 
 const MAX_RECORDS = 5;
 let records: readonly TelemetryRecord[] = [];

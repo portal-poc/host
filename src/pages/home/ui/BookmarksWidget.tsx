@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import type { MouseEvent } from 'react';
-import { Link, List, ListItem, Typography } from '@portal/ds';
+import { Link, List, ListItem, Typography } from '@portal-poc/ds';
 import { getHostHttp } from '@/shared/api';
 import { useHostNavigate } from '@/shared/lib';
 import { bookmarksOptions } from '../api/bookmarks';

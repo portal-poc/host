@@ -2,12 +2,12 @@ import { createRemoteAppComponent } from '@module-federation/bridge-react/base';
 import { loadRemote, loadShare, registerRemotes } from '@module-federation/runtime';
 import { createElement } from 'react';
 import type { ComponentType } from 'react';
-import { describeConflict, findSingletonConflicts, findToolingProblem, SINGLETONS, toBridgeRemoteName } from '@portal/mf-shared';
-import type { ManifestSharedEntry } from '@portal/mf-shared';
-import type { PlatformContract } from '@portal/platform-contract';
-import { isContractVersionSupported, isSameReactInstance } from '@portal/platform-runtime';
-import type { ContractVersionRange } from '@portal/platform-runtime';
-import { SpinnerFallback } from '@portal/ds';
+import { describeConflict, findSingletonConflicts, findToolingProblem, SINGLETONS, toBridgeRemoteName } from '@portal-poc/mf-shared';
+import type { ManifestSharedEntry } from '@portal-poc/mf-shared';
+import type { PlatformContract } from '@portal-poc/platform-contract';
+import { isContractVersionSupported, isSameReactInstance } from '@portal-poc/platform-runtime';
+import type { ContractVersionRange } from '@portal-poc/platform-runtime';
+import { SpinnerFallback } from '@portal-poc/ds';
 import { getRemoteEntry, getRemoteNames } from '../config';
 import type { RemoteEntry } from '../config';
 import { DEMO_KEYS, readFlag } from '../platform';
@@ -73,7 +73,7 @@ const assertContract = (name: string, runtime: RemoteRuntimeModule) => {
   if (!isContractVersionSupported(runtime.contractVersion, range)) {
     throw new IncompatibleRemoteError(
       `Remote "${name}" implements platform contract v${String(runtime.contractVersion)}, the host supports ` +
-        `v${range.min}–v${range.max}. Align @portal/platform-contract between the host and the remote.`,
+        `v${range.min}–v${range.max}. Align @portal-poc/platform-contract between the host and the remote.`,
     );
   }
 };

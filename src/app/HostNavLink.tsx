@@ -1,6 +1,6 @@
 import type { MouseEvent, ReactNode } from 'react';
 import { useLocation } from 'react-router';
-import { Link } from '@portal/ds';
+import { Link } from '@portal-poc/ds';
 import { useHostNavigate } from '@/shared/lib';
 
 export const HostNavLink = ({ to, children }: { to: string; children: ReactNode }) => {

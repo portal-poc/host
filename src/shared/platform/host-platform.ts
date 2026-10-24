@@ -1,5 +1,5 @@
-import { PLATFORM_CONTRACT_VERSION } from '@portal/platform-contract';
-import type { PlatformContract, PlatformLocale } from '@portal/platform-contract';
+import { PLATFORM_CONTRACT_VERSION } from '@portal-poc/platform-contract';
+import type { PlatformContract, PlatformLocale } from '@portal-poc/platform-contract';
 import {
   createConsoleTelemetry,
   createDevtoolsRegistry,
@@ -7,13 +7,13 @@ import {
   createPlatformEventBus,
   createRemoteAuth,
   isDevtoolsEnabled,
-} from '@portal/platform-runtime';
+} from '@portal-poc/platform-runtime';
 import { getHostConfig, getRemoteEntry } from '../config';
 import { DEMO_KEYS, readFlag } from './demo-flags';
 import { telemetryLog } from './telemetry-log';
 
 /**
- * ONE auth for the page (mock by default; `createMsalPlatformAuth(pca)` from '@portal/platform-runtime/msal' in real
+ * ONE auth for the page (mock by default; `createMsalPlatformAuth(pca)` from '@portal-poc/platform-runtime/msal' in real
  * setups — one PCA per app registration, interaction only here). Remotes get a per-remote allowlisted wrapper.
  */
 export const hostAuth = createMockPlatformAuth({
