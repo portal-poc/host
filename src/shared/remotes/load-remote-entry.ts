@@ -2,7 +2,7 @@ import { createRemoteAppComponent } from '@module-federation/bridge-react/base';
 import { loadRemote, registerRemotes } from '@module-federation/runtime';
 import { createElement } from 'react';
 import type { ComponentType } from 'react';
-import { describeConflict, findSingletonConflicts, toBridgeRemoteName } from '@portal/mf-shared';
+import { describeConflict, findSingletonConflicts, findToolingProblem, toBridgeRemoteName } from '@portal/mf-shared';
 import type { ManifestSharedEntry } from '@portal/mf-shared';
 import type { PlatformContract } from '@portal/platform-contract';
 import { isContractVersionSupported, isSameReactInstance } from '@portal/platform-runtime';
@@ -44,13 +44,15 @@ const loadModule = async <T,>(id: string): Promise<T> => {
   return module;
 };
 
-const readManifestShared = async (url: string): Promise<ManifestSharedEntry[]> => {
+type ManifestInfo = { shared: ManifestSharedEntry[]; pluginVersion: string | undefined };
+
+const readManifest = async (url: string): Promise<ManifestInfo> => {
   const response = await fetch(url, { cache: 'no-cache' });
   if (!response.ok) {
     throw new Error(`Manifest ${url} → HTTP ${response.status}${url.includes('localhost') ? ' (is the dev server running?)' : ''}`);
   }
-  const manifest: { shared?: ManifestSharedEntry[] } = await response.json();
-  return manifest.shared ?? [];
+  const manifest: { shared?: ManifestSharedEntry[]; metaData?: { pluginVersion?: string } } = await response.json();
+  return { shared: manifest.shared ?? [], pluginVersion: manifest.metaData?.pluginVersion };
 };
 
 const getSupportedRange = (): ContractVersionRange =>
@@ -87,12 +89,17 @@ const loadBridgeVariant = async (name: string, entry: RemoteEntry, reason: strin
 };
 
 const resolveRemote = async (name: string, entry: RemoteEntry): Promise<LoadedRemote> => {
-  if (entry.devServer) {
+  if (entry.devServer && import.meta.env.DEV) {
     await attachToRemoteDevServer(new URL(entry.manifest).origin);
   }
-  // 1. Before executing any remote code: do the remote's singleton requirements match what this host provides?
-  //    (MF `singleton: true` would silently hand the remote the host's copy anyway.)
-  const conflicts = findSingletonConflicts(await readManifestShared(entry.manifest), PORTAL_HOST_COMPAT.singletons);
+  // 1. Before executing any remote code: was it built with tooling this host's MF runtime can load, and do its
+  //    singleton requirements match what this host provides? (MF would silently hand it the host's copy anyway.)
+  const manifest = await readManifest(entry.manifest);
+  const toolingProblem = findToolingProblem(manifest.pluginVersion, PORTAL_HOST_COMPAT.remoteTooling.mfPlugin);
+  if (toolingProblem) {
+    throw new IncompatibleRemoteError(`Remote "${name}@${entry.version}" cannot be loaded by this host: ${toolingProblem}.`);
+  }
+  const conflicts = findSingletonConflicts(manifest.shared, PORTAL_HOST_COMPAT.singletons);
   if (conflicts.length > 0) {
     return loadBridgeVariant(name, entry, conflicts.map(describeConflict).join('; '));
   }
@@ -113,10 +120,10 @@ export const loadRemoteEntry = async (name: string): Promise<LoadedRemote> => {
   const entry = getRemoteEntry(name);
   try {
     const loaded = await resolveRemote(name, entry);
-    remoteStatusStore.set({ name, version: entry.version, source: entry.source, mode: loaded.mode });
+    remoteStatusStore.set({ name, version: entry.version, source: entry.devServer ? 'local' : 'registry', mode: loaded.mode });
     return loaded;
   } catch (error) {
-    remoteStatusStore.set({ name, version: entry.version, source: entry.source, mode: 'error', detail: String(error) });
+    remoteStatusStore.set({ name, version: entry.version, source: entry.devServer ? 'local' : 'registry', mode: 'error', detail: String(error) });
     throw error;
   }
 };

@@ -5,7 +5,7 @@ import { remoteStatusStore } from '@/shared/remotes';
 
 const MODE_COLOR = { integrated: 'success', bridge: 'warning', error: 'danger' } as const;
 
-/** DX: which stand, which remote versions, from where (registry or local override), in which mode. */
+/** DX: which stand, which remote versions, from where (stand registry or a local dev server), in which mode. */
 export const RemotesInfo = () => {
   const statuses = useSyncExternalStore(remoteStatusStore.subscribe, remoteStatusStore.getSnapshot);
   return (

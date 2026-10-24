@@ -14,6 +14,7 @@ export const getHostHttp = () => {
     scopes: HOST_BFF_SCOPES,
     auth: platform.auth,
     telemetry: platform.telemetry,
+    clientVersion: `host@${PORTAL_HOST_COMPAT.hostVersion}`,
     fetch: fakeHostFetch, // PoC: hard-coded backend
   });
   return http;

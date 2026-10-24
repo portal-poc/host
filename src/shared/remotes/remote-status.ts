@@ -1,7 +1,7 @@
 type RemoteStatus = {
   name: string;
   version: string;
-  source: 'registry' | 'override';
+  source: 'registry' | 'local';
   mode: 'integrated' | 'bridge' | 'error';
   detail?: string;
 };
