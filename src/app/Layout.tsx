@@ -2,6 +2,7 @@ import { useSyncExternalStore } from 'react';
 import { Outlet, useNavigation } from 'react-router';
 import { Box, Button, Sheet, Spinner, Stack, Typography } from '@portal-poc/ds';
 import { DevtoolsToolbar, useClearCacheOnAccountChange } from '@portal-poc/platform-runtime';
+import { PlatformLeaveBlocker } from '@portal-poc/platform-runtime/router';
 import { useInvalidateBookmarksOnEvent } from '@/pages/home';
 import { getHostQueryClient } from '@/shared/api';
 import { getHostConfig, getRemoteSections } from '@/shared/config';
@@ -9,7 +10,9 @@ import { devtoolsRegistry, getHostPlatform, hostAuth, isDemoEnabled } from '@/sh
 import { QueryBoundary } from '@/shared/ui';
 import { DemoPanel } from './DemoPanel';
 import { HostNavLink } from './HostNavLink';
+import { LeaveDialog } from './LeaveDialog';
 import { RemotesInfo } from './RemotesInfo';
+import { useDocumentTitle } from './use-document-title';
 
 const signIn = () => {
   void hostAuth.requestInteraction([]);
@@ -27,12 +30,16 @@ const SignedOut = () => {
 export const Layout = () => {
   useClearCacheOnAccountChange(getHostPlatform(), getHostQueryClient);
   useInvalidateBookmarksOnEvent();
+  useDocumentTitle();
   const account = useSyncExternalStore(hostAuth.subscribe, hostAuth.getAccount);
   // Optimistic router state (`useTransitions`): stays non-idle while the target suspends (e.g. remote loading).
   const isNavigating = useNavigation().state !== 'idle';
 
   return (
     <Box>
+      {/* The page's single router blocker: asks the leave guards of the host and of every app (contract navigation). */}
+      <PlatformLeaveBlocker platform={getHostPlatform()} />
+      <LeaveDialog />
       {/* Persistent element: isolated from the page snapshot during route transitions. */}
       <Sheet component="header" variant="soft" sx={{ px: 2, py: 1.5, viewTransitionName: 'host-header' }}>
         <Stack direction="row" gap={2} alignItems="center">

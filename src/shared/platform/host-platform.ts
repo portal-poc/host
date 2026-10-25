@@ -3,6 +3,7 @@ import type { PlatformContract, PlatformLocale } from '@portal-poc/platform-cont
 import {
   createConsoleTelemetry,
   createDevtoolsRegistry,
+  createLeaveGuards,
   createMockPlatformAuth,
   createPlatformEventBus,
   createRemoteAuth,
@@ -10,6 +11,8 @@ import {
 } from '@portal-poc/platform-runtime';
 import { getHostConfig, getRemoteEntry } from '../config';
 import { DEMO_KEYS, readFlag } from './demo-flags';
+import { leaveDialog } from './leave-dialog';
+import { pageTitles } from './page-titles';
 import { telemetryLog } from './telemetry-log';
 
 /**
@@ -22,6 +25,9 @@ export const hostAuth = createMockPlatformAuth({
 });
 
 const hostEvents = createPlatformEventBus();
+
+/** One registry of leave guards for the page: the host's blocker and every own router (bridge apps) ask it. */
+const hostNavigation = createLeaveGuards({ ask: leaveDialog.ask, notifyLocked: leaveDialog.notifyLocked });
 
 export const devtoolsRegistry = isDevtoolsEnabled(import.meta.env.DEV) ? createDevtoolsRegistry() : null;
 
@@ -44,6 +50,9 @@ const buildBase = (app: string): Omit<PlatformContract, 'auth'> => ({
   events: hostEvents,
   telemetry: createTelemetry(app),
   locale,
+  navigation: hostNavigation,
+  // Per app: the layout shows the title of the section on screen.
+  document: { setTitle: (title) => pageTitles.set(app, title) },
   ...(devtoolsRegistry ? { devtools: devtoolsRegistry } : {}),
 });
 

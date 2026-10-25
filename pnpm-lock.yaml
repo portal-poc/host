@@ -182,8 +182,8 @@ importers:
         specifier: 5.0.0-beta.52
         version: 5.0.0-beta.52(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@portal-poc/ds':
-        specifier: ^1.0.2
-        version: 1.0.2(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(@mui/joy@5.0.0-beta.52(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: ^1.1.0
+        version: 1.1.0(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(@mui/joy@5.0.0-beta.52(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@portal-poc/events':
         specifier: ^1.0.0
         version: 1.0.0(zod@4.6.7)
@@ -194,11 +194,11 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       '@portal-poc/platform-contract':
-        specifier: ^1.1.0
-        version: 1.1.0
+        specifier: ^1.2.0
+        version: 1.2.0
       '@portal-poc/platform-runtime':
-        specifier: ^2.1.0
-        version: 2.1.0(@azure/msal-browser@5.26.0)(@tanstack/react-query@5.104.5(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(csstype@3.2.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: ^2.2.0
+        version: 2.2.0(@azure/msal-browser@5.26.0)(@tanstack/react-query@5.104.5(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(csstype@3.2.3)(react-dom@19.3.1(react@19.3.1))(react-router@8.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)
       '@tanstack/react-query':
         specifier: ^5.104.5
         version: 5.104.5(@types/react@19.3.0)(react@19.3.1)
@@ -228,8 +228,8 @@ importers:
         specifier: ^1.23.5
         version: 1.23.5(typescript@7.0.2)(vite@8.3.5(@types/node@26.6.5))
       '@portal-poc/presets':
-        specifier: ^1.0.3
-        version: 1.0.3(@feature-sliced/steiger-plugin@0.8.0(typescript@7.0.2))(fallow@3.35.0)(steiger@0.8.0(typescript@7.0.2))(vitest@5.0.5(@types/node@26.6.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5)))
+        specifier: ^1.0.4
+        version: 1.0.4(@feature-sliced/steiger-plugin@0.8.0(typescript@7.0.2))(fallow@3.35.0)(steiger@0.8.0(typescript@7.0.2))(vitest@5.0.5(@types/node@26.6.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5)))
       '@portal-poc/vite-config':
         specifier: ^1.3.0
         version: 1.3.0(@module-federation/vite@1.23.5(typescript@7.0.2)(vite@8.3.5(@types/node@26.6.5)))(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.9)(@babel/runtime@7.29.10)(rolldown@1.2.15)(vite@8.3.5(@types/node@26.6.5)))(@vitejs/plugin-react@6.1.2(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.9)(@babel/runtime@7.29.10)(rolldown@1.2.15)(vite@8.3.5(@types/node@26.6.5)))(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@26.6.5)))(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@26.6.5))
@@ -875,8 +875,8 @@ packages:
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
 
-  '@portal-poc/ds@1.0.2':
-    resolution: {integrity: sha512-gHN9+i4O54GPxGg+HiDx3zezroRUQoYQYHwk3wjdxcHkUl4aDWbjhHTV/vGKaffTxsOPleWdhXJTbnTSwR4Lew==, tarball: https://npm.pkg.github.com/download/@portal-poc/ds/1.0.2/0d3047dabca5b90c393e46ed47e3762aaf1c01b3}
+  '@portal-poc/ds@1.1.0':
+    resolution: {integrity: sha512-2w7pc8ivM6wcwverHPw1mUJ21OcgYsZnd3Y7C2D6gYuC4cGLJ0emMrnnK19YZedwMMGA3vniT2OWq/MV9TvKZg==, tarball: https://npm.pkg.github.com/download/@portal-poc/ds/1.1.0/ada02ea36c27690bba7e87072c560b08c32666d0}
     peerDependencies:
       '@emotion/react': ^11.14.0
       '@emotion/styled': ^11.14.0
@@ -898,19 +898,20 @@ packages:
   '@portal-poc/mf-shared@1.0.0':
     resolution: {integrity: sha512-KA1EbI9y9LSNFU0hyB94QwDeG6lqXcfzS5fmmqQm2z1KHV4rBuoSVqyi+cDqcWQsuNiFeMq1IRdbiYeC4QaHrQ==, tarball: https://npm.pkg.github.com/download/@portal-poc/mf-shared/1.0.0/3e763312c2066fc157d67702bc5a6be574138d8f}
 
-  '@portal-poc/platform-contract@1.1.0':
-    resolution: {integrity: sha512-zUvgzmSzaR14c+pOWdJCronr/erCzxxbCgt2qeBFrVdrc/Xcmfadl59eKx/9Ow5Grodx4rwGXg5VeEk2gICLnQ==, tarball: https://npm.pkg.github.com/download/@portal-poc/platform-contract/1.1.0/305e8c664fd30144db38dadec21b7a43098b3778}
+  '@portal-poc/platform-contract@1.2.0':
+    resolution: {integrity: sha512-44slG1pCGt7LqAiBjfFePBwrYeLX3eMdZVvtbJKwSpIj/WUYVa5cEXhE9fTIHAhsA7as8v8tuLRxrJX7FgnwOg==, tarball: https://npm.pkg.github.com/download/@portal-poc/platform-contract/1.2.0/9801d22a1cffdd2fac3034b683980cea0f912df5}
 
-  '@portal-poc/platform-runtime@2.1.0':
-    resolution: {integrity: sha512-Hr2PYbCOeGStkfI+YnHxmkkDAQtRpm7U3HQ9UTMhFPhuFR2HeJRl2x9ItSrM8+MejVN7fqPJkBqE2GBkf5WEnw==, tarball: https://npm.pkg.github.com/download/@portal-poc/platform-runtime/2.1.0/a2b3c9e6d18e71489ea654b221cfef867eb18bb1}
+  '@portal-poc/platform-runtime@2.2.0':
+    resolution: {integrity: sha512-v6nCzv6liiyEu6BId0p3iUCtNVERdO5PeHaAa9mT4F5pTVUniWvcyAeIEuL+yJHmOac5YcaM5Kqqdg/+RujU0w==, tarball: https://npm.pkg.github.com/download/@portal-poc/platform-runtime/2.2.0/ff550015a726da159db827a149d9592d44815488}
     peerDependencies:
       '@azure/msal-browser': ^5.0.0
       '@tanstack/react-query': ^5.104.0
       react: ^19.3.0
       react-dom: ^19.3.0
+      react-router: ^8.5.0
 
-  '@portal-poc/presets@1.0.3':
-    resolution: {integrity: sha512-vAnBOSrBCWTG7E75uxZyePgfmS2xRcLaa4GibOlgEYeRAMltXYISCFiBX6dCAZKrLFFPag1/DKAgYb2sDH+Qig==, tarball: https://npm.pkg.github.com/download/@portal-poc/presets/1.0.3/4e3347a856408ce45abd99061d0ac039366502c2}
+  '@portal-poc/presets@1.0.4':
+    resolution: {integrity: sha512-FELVPmvUHWyhB8QdrUaLuvH+OdHWzDqORksmnm9fGwlZRSobWQ0oZLFYdgPTynHvCsvkHGtUGz9GAVFhxvSgPA==, tarball: https://npm.pkg.github.com/download/@portal-poc/presets/1.0.4/7f5ff1137de4d874960bdb9a70c0391595594786}
     peerDependencies:
       '@feature-sliced/steiger-plugin': ^0.8.0
       fallow: ^3.35.0
@@ -2994,7 +2995,7 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
-  '@portal-poc/ds@1.0.2(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(@mui/joy@5.0.0-beta.52(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@portal-poc/ds@1.1.0(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(@mui/joy@5.0.0-beta.52(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.3.0)(react@19.3.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1)
@@ -3007,12 +3008,12 @@ snapshots:
 
   '@portal-poc/events@1.0.0(zod@4.6.7)':
     dependencies:
-      '@portal-poc/platform-contract': 1.1.0
+      '@portal-poc/platform-contract': 1.2.0
       zod: 4.6.7
 
   '@portal-poc/http@1.0.0(axios@1.20.0(debug@4.4.3))(zod@4.6.7)':
     dependencies:
-      '@portal-poc/platform-contract': 1.1.0
+      '@portal-poc/platform-contract': 1.2.0
       axios: 1.20.0(debug@4.4.3)
       zod: 4.6.7
 
@@ -3020,21 +3021,22 @@ snapshots:
     dependencies:
       semver: 7.8.5
 
-  '@portal-poc/platform-contract@1.1.0': {}
+  '@portal-poc/platform-contract@1.2.0': {}
 
-  '@portal-poc/platform-runtime@2.1.0(@azure/msal-browser@5.26.0)(@tanstack/react-query@5.104.5(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(csstype@3.2.3)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@portal-poc/platform-runtime@2.2.0(@azure/msal-browser@5.26.0)(@tanstack/react-query@5.104.5(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(csstype@3.2.3)(react-dom@19.3.1(react@19.3.1))(react-router@8.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@azure/msal-browser': 5.26.0
-      '@portal-poc/platform-contract': 1.1.0
+      '@portal-poc/platform-contract': 1.2.0
       '@tanstack/react-query': 5.104.5(@types/react@19.3.0)(react@19.3.1)
       '@tanstack/react-query-devtools': 5.104.5(@tanstack/react-query@5.104.5(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(csstype@3.2.3)(react@19.3.1)
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
+      react-router: 8.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
     transitivePeerDependencies:
       - '@types/react'
       - csstype
 
-  '@portal-poc/presets@1.0.3(@feature-sliced/steiger-plugin@0.8.0(typescript@7.0.2))(fallow@3.35.0)(steiger@0.8.0(typescript@7.0.2))(vitest@5.0.5(@types/node@26.6.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5)))':
+  '@portal-poc/presets@1.0.4(@feature-sliced/steiger-plugin@0.8.0(typescript@7.0.2))(fallow@3.35.0)(steiger@0.8.0(typescript@7.0.2))(vitest@5.0.5(@types/node@26.6.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5)))':
     dependencies:
       '@feature-sliced/steiger-plugin': 0.8.0(typescript@7.0.2)
       fallow: 3.35.0

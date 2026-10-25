@@ -6,4 +6,6 @@ export {
   hostAuth,
   setHostNavigate,
 } from './host-platform';
+export { leaveDialog } from './leave-dialog';
+export { pageTitles } from './page-titles';
 export { telemetryLog } from './telemetry-log';
