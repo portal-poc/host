@@ -39,7 +39,17 @@ on `tst` only with `?demo=1` (remembered in the browser, `?demo=0` hides it). De
 
 ## Deploy
 
-Actions → **Deploy** → Run workflow: pick the stand (`dev3`, `dev2`, `dev1`, `tst`) and the branch or tag. The build
-is checked against every remote registered on that stand (`portal-cli registry check`); if one would break, the stand
-keeps its current host. Otherwise it is uploaded to Nexus (`portal-stands/<stand>/host/`) and served at
-`https://<stand>.poc.ashirokov.dev` on the next page load. The stand's remotes (its `/config.json`) are not touched.
+Actions → **Deploy** → Run workflow: pick the stand and the branch or tag. The host rides the same release train as
+the remotes and follows the same stand rules (registry `stands.json`), checked before the build:
+
+| Stand | Ref | Result |
+|---|---|---|
+| `dev3` | any branch (`main`, `feature/…`) | built as `1.8.0-snapshot.<run>+<sha>`, installed in place |
+| `dev2` | the newest `release/X.Y` or its tags | `X.Y.<next>-rc.<run>` / `X.Y.Z`, published once to `portal-releases/host/<version>/`, commit to `dev2/_host.json`; the config deploy installs it |
+| `dev1` | the pilot line (`release/1.5`) or its tags | the same, `dev1/_host.json` |
+| `tst` | — | refused: Promote in the registry brings dev1's host |
+
+Every build passes the reverse gate first: each remote registered on the stand must still work with it, otherwise
+the stand keeps its current host. Rollback: deploy the previous tag (same artifact) or
+`portal-cli host release --stand dev2 --version <older>`. `package.json` holds the line `main` builds (bump it when a
+release line is cut); fixes go to `release/X.Y` and are forward-merged to newer lines and `main`.

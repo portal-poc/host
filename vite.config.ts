@@ -25,7 +25,9 @@ const commit = gitCommitOf(appDir);
 
 /** `commit`: what to check out to reproduce the host running on a stand (read by `registry status` and the panel). */
 const hostCompat: HostCompat & { commit?: string } = {
-  hostVersion: readVersion(new URL('./package.json', import.meta.url)),
+  // `portal-cli host deploy` sets the version (release/1.7 → 1.7.0-rc.12, dev3 → 1.8.0-snapshot.40+abc1234);
+  // package.json only holds the line main builds.
+  hostVersion: process.env['PORTAL_APP_VERSION'] || readVersion(new URL('./package.json', import.meta.url)),
   ...(commit ? { commit } : {}),
   contract: SUPPORTED_CONTRACT_VERSIONS,
   singletons: Object.fromEntries(
