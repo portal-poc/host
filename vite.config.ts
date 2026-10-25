@@ -124,6 +124,8 @@ const devContentSecurityPolicy = (remoteOrigins: readonly string[]) => {
     "default-src 'self'",
     `script-src 'self' 'unsafe-inline' ${remotes}`,
     `connect-src 'self' ${remotes} ws://localhost:*`,
+    // The Vite client starts a worker from a blob: URL (dev only; without it script-src would block it).
+    "worker-src 'self' blob:",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data:",
   ].join('; ');
