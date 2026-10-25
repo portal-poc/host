@@ -22,7 +22,7 @@
     "@portal-poc/http": "^1.0.0",
     "@portal-poc/mf-shared": "^1.0.0",
     "@portal-poc/platform-contract": "^1.2.0",
-    "@portal-poc/platform-runtime": "^2.2.0",
+    "@portal-poc/platform-runtime": "^2.2.1",
     "@tanstack/react-query": "^5.104.5",
     "axios": "^1.20.0",
     "react": "^19.3.1",

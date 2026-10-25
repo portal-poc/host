@@ -6,15 +6,16 @@ import { DsProvider } from '@portal-poc/ds';
 import { installStaleBuildRecovery, PlatformProvider } from '@portal-poc/platform-runtime';
 import { getHostQueryClient } from '@/shared/api';
 import { loadHostConfig } from '@/shared/config';
-import { getHostPlatform } from '@/shared/platform';
+import { getHostPlatform, hasLeaveGuards } from '@/shared/platform';
 import { loadHostSingletons, registerConfiguredRemotes } from '@/shared/remotes';
 import { createHostRouter } from './router';
 // Side-effect import: global view-transition CSS of the host.
 // oxlint-disable-next-line import/no-unassigned-import
 import './view-transitions.css';
 
-// First: a tab opened on an earlier build reloads when one of its chunks is gone (snapshot cleanup, redeploys).
-installStaleBuildRecovery();
+// First: a tab opened on an earlier build reloads when one of its chunks is gone (snapshot cleanup, redeploys) —
+// unless a leave guard holds the page (a dirty form): then the error shows instead, and nothing is lost.
+installStaleBuildRecovery({ canReload: () => !hasLeaveGuards() });
 await loadHostConfig();
 await loadHostSingletons();
 registerConfiguredRemotes();

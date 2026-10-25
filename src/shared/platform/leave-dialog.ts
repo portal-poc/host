@@ -21,6 +21,8 @@ const update = (next: Partial<LeaveDialogState>) => {
 export const leaveDialog = {
   ask: (guard: PlatformLeaveGuard, pathname: string) =>
     new Promise<boolean>((resolve) => {
+      // A newer navigation (back while the dialog is open) replaces the question: the older one stays.
+      state.asking?.resolve(false);
       update({ asking: { message: guard.message, pathname, resolve } });
     }),
   answer: (leave: boolean) => {

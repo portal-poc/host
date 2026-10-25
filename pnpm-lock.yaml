@@ -197,8 +197,8 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
       '@portal-poc/platform-runtime':
-        specifier: ^2.2.0
-        version: 2.2.0(@azure/msal-browser@5.26.0)(@tanstack/react-query@5.104.5(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(csstype@3.2.3)(react-dom@19.3.1(react@19.3.1))(react-router@8.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)
+        specifier: ^2.2.1
+        version: 2.2.1(@azure/msal-browser@5.26.0)(@tanstack/react-query@5.104.5(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(csstype@3.2.3)(react-dom@19.3.1(react@19.3.1))(react-router@8.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)
       '@tanstack/react-query':
         specifier: ^5.104.5
         version: 5.104.5(@types/react@19.3.0)(react@19.3.1)
@@ -901,8 +901,8 @@ packages:
   '@portal-poc/platform-contract@1.2.0':
     resolution: {integrity: sha512-44slG1pCGt7LqAiBjfFePBwrYeLX3eMdZVvtbJKwSpIj/WUYVa5cEXhE9fTIHAhsA7as8v8tuLRxrJX7FgnwOg==, tarball: https://npm.pkg.github.com/download/@portal-poc/platform-contract/1.2.0/9801d22a1cffdd2fac3034b683980cea0f912df5}
 
-  '@portal-poc/platform-runtime@2.2.0':
-    resolution: {integrity: sha512-v6nCzv6liiyEu6BId0p3iUCtNVERdO5PeHaAa9mT4F5pTVUniWvcyAeIEuL+yJHmOac5YcaM5Kqqdg/+RujU0w==, tarball: https://npm.pkg.github.com/download/@portal-poc/platform-runtime/2.2.0/ff550015a726da159db827a149d9592d44815488}
+  '@portal-poc/platform-runtime@2.2.1':
+    resolution: {integrity: sha512-RGHJxjg1KZVu7GWlpYnu1Q0EwdZIGhtxyyQw2mznygzepaBvq8iR5BX3bpbDVnUIVHnQq1Ry6OF+1uosOSnMaA==, tarball: https://npm.pkg.github.com/download/@portal-poc/platform-runtime/2.2.1/bf1d814e89225669696d97f2955e8534f78a4748}
     peerDependencies:
       '@azure/msal-browser': ^5.0.0
       '@tanstack/react-query': ^5.104.0
@@ -3023,7 +3023,7 @@ snapshots:
 
   '@portal-poc/platform-contract@1.2.0': {}
 
-  '@portal-poc/platform-runtime@2.2.0(@azure/msal-browser@5.26.0)(@tanstack/react-query@5.104.5(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(csstype@3.2.3)(react-dom@19.3.1(react@19.3.1))(react-router@8.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)':
+  '@portal-poc/platform-runtime@2.2.1(@azure/msal-browser@5.26.0)(@tanstack/react-query@5.104.5(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(csstype@3.2.3)(react-dom@19.3.1(react@19.3.1))(react-router@8.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@azure/msal-browser': 5.26.0
       '@portal-poc/platform-contract': 1.2.0

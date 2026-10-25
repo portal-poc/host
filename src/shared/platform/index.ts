@@ -3,6 +3,7 @@ export {
   buildPlatformForRemote,
   devtoolsRegistry,
   getHostPlatform,
+  hasLeaveGuards,
   hostAuth,
   setHostNavigate,
 } from './host-platform';

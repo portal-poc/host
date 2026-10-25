@@ -29,6 +29,9 @@ const hostEvents = createPlatformEventBus();
 /** One registry of leave guards for the page: the host's blocker and every own router (bridge apps) ask it. */
 const hostNavigation = createLeaveGuards({ ask: leaveDialog.ask, notifyLocked: leaveDialog.notifyLocked });
 
+/** A guard holds the page: a reload now would make the browser ask (and could be cancelled). */
+export const hasLeaveGuards = (): boolean => hostNavigation.hasGuards();
+
 export const devtoolsRegistry = isDevtoolsEnabled(import.meta.env.DEV) ? createDevtoolsRegistry() : null;
 
 const locale: PlatformLocale = { language: 'en', subscribe: () => () => {} };
