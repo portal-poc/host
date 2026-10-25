@@ -231,8 +231,8 @@ importers:
         specifier: ^1.0.3
         version: 1.0.3(@feature-sliced/steiger-plugin@0.8.0(typescript@7.0.2))(fallow@3.35.0)(steiger@0.8.0(typescript@7.0.2))(vitest@5.0.5(@types/node@26.6.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5)))
       '@portal-poc/vite-config':
-        specifier: ^1.2.0
-        version: 1.2.0(@module-federation/vite@1.23.5(typescript@7.0.2)(vite@8.3.5(@types/node@26.6.5)))(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.9)(@babel/runtime@7.29.10)(rolldown@1.2.15)(vite@8.3.5(@types/node@26.6.5)))(@vitejs/plugin-react@6.1.2(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.9)(@babel/runtime@7.29.10)(rolldown@1.2.15)(vite@8.3.5(@types/node@26.6.5)))(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@26.6.5)))(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@26.6.5))
+        specifier: ^1.3.0
+        version: 1.3.0(@module-federation/vite@1.23.5(typescript@7.0.2)(vite@8.3.5(@types/node@26.6.5)))(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.9)(@babel/runtime@7.29.10)(rolldown@1.2.15)(vite@8.3.5(@types/node@26.6.5)))(@vitejs/plugin-react@6.1.2(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.9)(@babel/runtime@7.29.10)(rolldown@1.2.15)(vite@8.3.5(@types/node@26.6.5)))(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@26.6.5)))(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@26.6.5))
       '@rolldown/plugin-babel':
         specifier: ^0.2.4
         version: 0.2.4(@babel/core@8.0.9)(@babel/runtime@7.29.10)(rolldown@1.2.15)(vite@8.3.5(@types/node@26.6.5))
@@ -917,8 +917,8 @@ packages:
       steiger: ^0.8.0
       vitest: ^5.0.0
 
-  '@portal-poc/vite-config@1.2.0':
-    resolution: {integrity: sha512-TRqe8eHU4OSY3l2rNL3BOimnBGqwmjzzBJv7nHKBTHpjdViBVR60gqbO0kd/IUFManC5MRuJeE3mDPjLlJh6SQ==, tarball: https://npm.pkg.github.com/download/@portal-poc/vite-config/1.2.0/b7f438ad1ade92f5abad21554a665bb41b85f771}
+  '@portal-poc/vite-config@1.3.0':
+    resolution: {integrity: sha512-boXKCOVPx01weA+gJrO4OTQ+r39KjVArwzyqoY8RlzzBX9JWOSkOfKjtt0ML0pxaOeVBI0eoTnxvaunuwx/mcw==, tarball: https://npm.pkg.github.com/download/@portal-poc/vite-config/1.3.0/e4334e8071eaa073a7dcff86fff1c4095874e1ff}
     peerDependencies:
       '@module-federation/vite': ~1.23.5
       '@rolldown/plugin-babel': ^0.2.4
@@ -3041,7 +3041,7 @@ snapshots:
       steiger: 0.8.0(typescript@7.0.2)
       vitest: 5.0.5(@types/node@26.6.5)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.5))
 
-  '@portal-poc/vite-config@1.2.0(@module-federation/vite@1.23.5(typescript@7.0.2)(vite@8.3.5(@types/node@26.6.5)))(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.9)(@babel/runtime@7.29.10)(rolldown@1.2.15)(vite@8.3.5(@types/node@26.6.5)))(@vitejs/plugin-react@6.1.2(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.9)(@babel/runtime@7.29.10)(rolldown@1.2.15)(vite@8.3.5(@types/node@26.6.5)))(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@26.6.5)))(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@26.6.5))':
+  '@portal-poc/vite-config@1.3.0(@module-federation/vite@1.23.5(typescript@7.0.2)(vite@8.3.5(@types/node@26.6.5)))(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.9)(@babel/runtime@7.29.10)(rolldown@1.2.15)(vite@8.3.5(@types/node@26.6.5)))(@vitejs/plugin-react@6.1.2(@rolldown/plugin-babel@0.2.4(@babel/core@8.0.9)(@babel/runtime@7.29.10)(rolldown@1.2.15)(vite@8.3.5(@types/node@26.6.5)))(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@26.6.5)))(babel-plugin-react-compiler@1.0.0)(vite@8.3.5(@types/node@26.6.5))':
     dependencies:
       '@module-federation/vite': 1.23.5(typescript@7.0.2)(vite@8.3.5(@types/node@26.6.5))
       '@portal-poc/mf-shared': 1.0.0

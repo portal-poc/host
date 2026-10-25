@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { SINGLETONS, SUPPORTED_BUILD_TOOLING, SUPPORTED_CONTRACT_VERSIONS } from '@portal-poc/mf-shared';
 import type { HostCompat } from '@portal-poc/mf-shared';
-import { createHostViteConfig } from '@portal-poc/vite-config';
+import { createHostViteConfig, gitCommitOf } from '@portal-poc/vite-config';
 import { loadEnv } from 'vite';
 import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 import { NO_STAND, parseDevEnv } from './build/dev-env.ts';
@@ -21,8 +21,12 @@ const readVersion = (packageJsonUrl: URL): string => {
 const packageNameOf = (specifier: string): string =>
   specifier.split('/').slice(0, specifier.startsWith('@') ? 2 : 1).join('/');
 
-const hostCompat: HostCompat = {
+const commit = gitCommitOf(appDir);
+
+/** `commit`: what to check out to reproduce the host running on a stand (read by `registry status` and the panel). */
+const hostCompat: HostCompat & { commit?: string } = {
   hostVersion: readVersion(new URL('./package.json', import.meta.url)),
+  ...(commit ? { commit } : {}),
   contract: SUPPORTED_CONTRACT_VERSIONS,
   singletons: Object.fromEntries(
     Object.keys(SINGLETONS).map((name) => [name, readVersion(new URL(`./node_modules/${packageNameOf(name)}/package.json`, import.meta.url))]),

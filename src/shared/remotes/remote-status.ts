@@ -1,6 +1,8 @@
 type RemoteStatus = {
   name: string;
   version: string;
+  /** The commit the loaded build was made from (manifest `metaData.portal.commit`), when recorded. */
+  commit?: string;
   source: 'registry' | 'local';
   mode: 'integrated' | 'bridge' | 'error';
   detail?: string;

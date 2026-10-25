@@ -57,17 +57,25 @@ const loadModule = async <T,>(id: string): Promise<T> => {
   return module;
 };
 
-/** `appVersion`: what was actually built — on a snapshot stand the registry only says `snapshot`. */
-type ManifestInfo = { shared: ManifestSharedEntry[]; pluginVersion: string | undefined; appVersion: string | undefined };
+/** `appVersion`: what was actually built — on a snapshot stand the registry only says `snapshot`. `commit`: its source. */
+type ManifestInfo = {
+  shared: ManifestSharedEntry[];
+  pluginVersion: string | undefined;
+  appVersion: string | undefined;
+  commit: string | undefined;
+};
 
 const readManifest = async (url: string): Promise<ManifestInfo> => {
   const response = await fetch(url, { cache: 'no-cache' });
   if (!response.ok) {
     throw new Error(`Manifest ${url} → HTTP ${response.status}${url.includes('localhost') ? ' (is the dev server running?)' : ''}`);
   }
-  const manifest: { shared?: ManifestSharedEntry[]; metaData?: { pluginVersion?: string; portal?: { appVersion?: string } } } =
-    await response.json();
-  return { shared: manifest.shared ?? [], pluginVersion: manifest.metaData?.pluginVersion, appVersion: manifest.metaData?.portal?.appVersion };
+  const manifest: {
+    shared?: ManifestSharedEntry[];
+    metaData?: { pluginVersion?: string; portal?: { appVersion?: string; commit?: string } };
+  } = await response.json();
+  const { pluginVersion, portal } = manifest.metaData ?? {};
+  return { shared: manifest.shared ?? [], pluginVersion, appVersion: portal?.appVersion, commit: portal?.commit };
 };
 
 /** Demo switches count only where the demo panel is shown: a flag left in a browser never changes a business stand. */
@@ -137,14 +145,16 @@ export const loadRemoteEntry = async (name: string): Promise<LoadedRemote> => {
   const entry = getRemoteEntry(name);
   const source = entry.devServer ? 'local' : 'registry';
   let version = entry.version;
+  let commit: string | undefined;
   try {
     const manifest = await readManifest(entry.manifest);
     version = manifest.appVersion ?? entry.version;
+    commit = manifest.commit;
     const loaded = await resolveRemote(name, entry, manifest);
-    remoteStatusStore.set({ name, version, source, mode: loaded.mode });
+    remoteStatusStore.set({ name, version, ...(commit ? { commit } : {}), source, mode: loaded.mode });
     return { ...loaded, version };
   } catch (error) {
-    remoteStatusStore.set({ name, version, source, mode: 'error', detail: String(error) });
+    remoteStatusStore.set({ name, version, ...(commit ? { commit } : {}), source, mode: 'error', detail: String(error) });
     throw error;
   }
 };
