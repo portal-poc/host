@@ -11,4 +11,4 @@ permissions:
 jobs:
   ci:
     # Central pipeline owned by the platform team (pinned version).
-    uses: portal-poc/platform/.github/workflows/app-ci.yml@v1
+    uses: portal-poc/platform/.github/workflows/app-ci.yml@v2

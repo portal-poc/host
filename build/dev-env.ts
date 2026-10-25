@@ -6,7 +6,16 @@ export const NO_STAND = 'none';
 const REMOTE_KEY = /^PORTAL_REMOTE_([A-Z][A-Z0-9_]*)$/;
 const KNOWN_KEYS = new Set(['PORTAL_STAND', 'PORTAL_INFRA_URL']);
 /** Read by portal-cli / PoC infra, may be exported in the same shell: not ours, not typos. */
-const TOOLING_KEYS = new Set(['PORTAL_INFRA_DIR', 'PORTAL_NEXUS_DIR', 'PORTAL_REGISTRY_DIR', 'PORTAL_HOST_DIR', 'PORTAL_REGISTRY', 'PORTAL_APP_VERSION']);
+const TOOLING_KEYS = new Set([
+  'PORTAL_INFRA_DIR',
+  'PORTAL_NEXUS_URL',
+  'PORTAL_NEXUS_USER',
+  'PORTAL_NEXUS_PASSWORD',
+  'PORTAL_REGISTRY_DIR',
+  'PORTAL_HOST_DIR',
+  'PORTAL_REGISTRY',
+  'PORTAL_APP_VERSION',
+]);
 
 const standSchema = z
   .string()

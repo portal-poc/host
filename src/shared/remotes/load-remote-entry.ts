@@ -18,9 +18,12 @@ export type RemoteProps = { platform: PlatformContract; basename?: string };
 
 export type LoadedRemote = {
   mode: 'integrated' | 'bridge';
+  /** The built version (manifest), not the registry's: a snapshot stand registers just `snapshot`. */
   version: string;
   Component: ComponentType<RemoteProps>;
 };
+
+type ResolvedRemote = Omit<LoadedRemote, 'version'>;
 
 class IncompatibleRemoteError extends Error {
   constructor(message: string) {
@@ -54,15 +57,17 @@ const loadModule = async <T,>(id: string): Promise<T> => {
   return module;
 };
 
-type ManifestInfo = { shared: ManifestSharedEntry[]; pluginVersion: string | undefined };
+/** `appVersion`: what was actually built — on a snapshot stand the registry only says `snapshot`. */
+type ManifestInfo = { shared: ManifestSharedEntry[]; pluginVersion: string | undefined; appVersion: string | undefined };
 
 const readManifest = async (url: string): Promise<ManifestInfo> => {
   const response = await fetch(url, { cache: 'no-cache' });
   if (!response.ok) {
     throw new Error(`Manifest ${url} → HTTP ${response.status}${url.includes('localhost') ? ' (is the dev server running?)' : ''}`);
   }
-  const manifest: { shared?: ManifestSharedEntry[]; metaData?: { pluginVersion?: string } } = await response.json();
-  return { shared: manifest.shared ?? [], pluginVersion: manifest.metaData?.pluginVersion };
+  const manifest: { shared?: ManifestSharedEntry[]; metaData?: { pluginVersion?: string; portal?: { appVersion?: string } } } =
+    await response.json();
+  return { shared: manifest.shared ?? [], pluginVersion: manifest.metaData?.pluginVersion, appVersion: manifest.metaData?.portal?.appVersion };
 };
 
 const getSupportedRange = (): ContractVersionRange =>
@@ -88,23 +93,22 @@ const createBridgeComponent = (moduleName: string): ComponentType<RemoteProps> =
   });
 
 /** Isolated variant of the same version (own React/router/DS), published as `<version>/bridge/`. */
-const loadBridgeVariant = async (name: string, entry: RemoteEntry, reason: string): Promise<LoadedRemote> => {
+const loadBridgeVariant = async (name: string, entry: RemoteEntry, reason: string): Promise<ResolvedRemote> => {
   if (!entry.bridgeManifest) {
     throw new IncompatibleRemoteError(`Remote "${name}@${entry.version}" is incompatible with this host and has no bridge build: ${reason}`);
   }
   const bridgeName = toBridgeRemoteName(name);
   registerRemotes([{ name: bridgeName, entry: entry.bridgeManifest, type: 'module' }]);
   assertContract(name, await loadModule<RemoteRuntimeModule>(`${bridgeName}/runtime`));
-  return { mode: 'bridge', version: entry.version, Component: createBridgeComponent(bridgeName) };
+  return { mode: 'bridge', Component: createBridgeComponent(bridgeName) };
 };
 
-const resolveRemote = async (name: string, entry: RemoteEntry): Promise<LoadedRemote> => {
+const resolveRemote = async (name: string, entry: RemoteEntry, manifest: ManifestInfo): Promise<ResolvedRemote> => {
   if (entry.devServer && import.meta.env.DEV) {
     await attachToRemoteDevServer(new URL(entry.manifest).origin);
   }
   // 1. Before executing any remote code: was it built with tooling this host's MF runtime can load, and do its
   //    singleton requirements match what this host provides? (MF would silently hand it the host's copy anyway.)
-  const manifest = await readManifest(entry.manifest);
   const toolingProblem = findToolingProblem(manifest.pluginVersion, PORTAL_HOST_COMPAT.remoteTooling.mfPlugin);
   if (toolingProblem) {
     throw new IncompatibleRemoteError(`Remote "${name}@${entry.version}" cannot be loaded by this host: ${toolingProblem}.`);
@@ -120,20 +124,24 @@ const resolveRemote = async (name: string, entry: RemoteEntry): Promise<LoadedRe
   const runtime = await loadModule<RemoteRuntimeModule>(`${name}/runtime`);
   assertContract(name, runtime);
   if (!isSameReactInstance(runtime.remoteCreateElement)) {
-    return { mode: 'bridge', version: entry.version, Component: createBridgeComponent(name) };
+    return { mode: 'bridge', Component: createBridgeComponent(name) };
   }
   const module = await loadModule<{ default: ComponentType<RemoteProps> }>(`${name}/RemoteRoot`);
-  return { mode: 'integrated', version: entry.version, Component: module.default };
+  return { mode: 'integrated', Component: module.default };
 };
 
 export const loadRemoteEntry = async (name: string): Promise<LoadedRemote> => {
   const entry = getRemoteEntry(name);
+  const source = entry.devServer ? 'local' : 'registry';
+  let version = entry.version;
   try {
-    const loaded = await resolveRemote(name, entry);
-    remoteStatusStore.set({ name, version: entry.version, source: entry.devServer ? 'local' : 'registry', mode: loaded.mode });
-    return loaded;
+    const manifest = await readManifest(entry.manifest);
+    version = manifest.appVersion ?? entry.version;
+    const loaded = await resolveRemote(name, entry, manifest);
+    remoteStatusStore.set({ name, version, source, mode: loaded.mode });
+    return { ...loaded, version };
   } catch (error) {
-    remoteStatusStore.set({ name, version: entry.version, source: entry.devServer ? 'local' : 'registry', mode: 'error', detail: String(error) });
+    remoteStatusStore.set({ name, version, source, mode: 'error', detail: String(error) });
     throw error;
   }
 };
