@@ -1,4 +1,4 @@
-export { DEMO_KEYS, readFlag, writeFlag } from './demo-flags';
+export { DEMO_KEYS, isDemoEnabled, readFlag, writeFlag } from './demo-flags';
 export {
   buildPlatformForRemote,
   devtoolsRegistry,

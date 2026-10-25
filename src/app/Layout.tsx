@@ -4,8 +4,8 @@ import { Box, Button, Sheet, Spinner, Stack, Typography } from '@portal-poc/ds';
 import { DevtoolsToolbar, useClearCacheOnAccountChange } from '@portal-poc/platform-runtime';
 import { useInvalidateBookmarksOnEvent } from '@/pages/home';
 import { getHostQueryClient } from '@/shared/api';
-import { getRemoteSections } from '@/shared/config';
-import { devtoolsRegistry, getHostPlatform, hostAuth } from '@/shared/platform';
+import { getHostConfig, getRemoteSections } from '@/shared/config';
+import { devtoolsRegistry, getHostPlatform, hostAuth, isDemoEnabled } from '@/shared/platform';
 import { QueryBoundary } from '@/shared/ui';
 import { DemoPanel } from './DemoPanel';
 import { HostNavLink } from './HostNavLink';
@@ -58,7 +58,7 @@ export const Layout = () => {
           <SignedOut />
         )}
       </Box>
-      <DemoPanel />
+      {isDemoEnabled(getHostConfig().env) && <DemoPanel />}
       {devtoolsRegistry && <DevtoolsToolbar registry={devtoolsRegistry} extra={<RemotesInfo />} />}
     </Box>
   );

@@ -8,9 +8,9 @@ import type { PlatformContract } from '@portal-poc/platform-contract';
 import { isContractVersionSupported, isSameReactInstance } from '@portal-poc/platform-runtime';
 import type { ContractVersionRange } from '@portal-poc/platform-runtime';
 import { SpinnerFallback } from '@portal-poc/ds';
-import { getRemoteEntry, getRemoteNames } from '../config';
+import { getHostConfig, getRemoteEntry, getRemoteNames } from '../config';
 import type { RemoteEntry } from '../config';
-import { DEMO_KEYS, readFlag } from '../platform';
+import { DEMO_KEYS, isDemoEnabled, readFlag } from '../platform';
 import { attachToRemoteDevServer } from './dev-server';
 import { remoteStatusStore } from './remote-status';
 
@@ -70,8 +70,11 @@ const readManifest = async (url: string): Promise<ManifestInfo> => {
   return { shared: manifest.shared ?? [], pluginVersion: manifest.metaData?.pluginVersion, appVersion: manifest.metaData?.portal?.appVersion };
 };
 
+/** Demo switches count only where the demo panel is shown: a flag left in a browser never changes a business stand. */
+const readDemoSwitch = (key: string) => (isDemoEnabled(getHostConfig().env) ? readFlag(key) : null);
+
 const getSupportedRange = (): ContractVersionRange =>
-  readFlag(DEMO_KEYS.incompatibleContract) === '1' ? { min: 2, max: 2 } : PORTAL_HOST_COMPAT.contract;
+  readDemoSwitch(DEMO_KEYS.incompatibleContract) === '1' ? { min: 2, max: 2 } : PORTAL_HOST_COMPAT.contract;
 
 const assertContract = (name: string, runtime: RemoteRuntimeModule) => {
   const range = getSupportedRange();
@@ -117,7 +120,7 @@ const resolveRemote = async (name: string, entry: RemoteEntry, manifest: Manifes
   if (conflicts.length > 0) {
     return loadBridgeVariant(name, entry, conflicts.map(describeConflict).join('; '));
   }
-  if (readFlag(DEMO_KEYS.forceBridge) === name) {
+  if (readDemoSwitch(DEMO_KEYS.forceBridge) === name) {
     return loadBridgeVariant(name, entry, 'forced by the demo panel');
   }
   // 2. Tiny `./runtime`: contract version + React identity (a remote that shares nothing, like legacy, differs).

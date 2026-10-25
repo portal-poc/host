@@ -3,7 +3,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router/dom';
 import { DsProvider } from '@portal-poc/ds';
-import { PlatformProvider } from '@portal-poc/platform-runtime';
+import { installStaleBuildRecovery, PlatformProvider } from '@portal-poc/platform-runtime';
 import { getHostQueryClient } from '@/shared/api';
 import { loadHostConfig } from '@/shared/config';
 import { getHostPlatform } from '@/shared/platform';
@@ -13,6 +13,8 @@ import { createHostRouter } from './router';
 // oxlint-disable-next-line import/no-unassigned-import
 import './view-transitions.css';
 
+// First: a tab opened on an earlier build reloads when one of its chunks is gone (snapshot cleanup, redeploys).
+installStaleBuildRecovery();
 await loadHostConfig();
 await loadHostSingletons();
 registerConfiguredRemotes();

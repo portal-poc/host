@@ -3,7 +3,7 @@ import { SINGLETONS, SUPPORTED_BUILD_TOOLING, SUPPORTED_CONTRACT_VERSIONS } from
 import type { HostCompat } from '@portal-poc/mf-shared';
 import { createHostViteConfig } from '@portal-poc/vite-config';
 import { loadEnv } from 'vite';
-import type { Plugin } from 'vite';
+import type { Plugin, PreviewServer, ViteDevServer } from 'vite';
 import { NO_STAND, parseDevEnv } from './build/dev-env.ts';
 import type { DevEnv } from './build/dev-env.ts';
 
@@ -65,19 +65,18 @@ const isRecord = (value: unknown): value is Record<string, unknown> => typeof va
 const isStandConfig = (value: unknown): value is StandConfig =>
   isRecord(value) && typeof value['env'] === 'string' && isRecord(value['remotes']);
 
-const fetchStandConfig = async ({ stand, infraUrl }: DevEnv): Promise<StandConfig> => {
-  if (stand === NO_STAND) {
+/** The stand's own `/config.json` (what its deployed host reads), fetched on every page load: registry changes show up. */
+const fetchStandConfig = async ({ stand, standUrl }: DevEnv): Promise<StandConfig> => {
+  if (!standUrl) {
     return { env: LOCAL_ENV, remotes: {} };
   }
-  const response = await fetch(`${infraUrl}/stands/${stand}/config.json`).catch(() => null);
+  const url = `${standUrl}/config.json`;
+  const response = await fetch(url, { cache: 'no-store' }).catch(() => null);
   if (!response) {
-    throw new Error(`Infra is not running at ${infraUrl}: start \`pnpm infra\` in platform, or set PORTAL_STAND=none.`);
+    throw new Error(`${url} is not reachable: check the network or PORTAL_STAND_URL, or set PORTAL_STAND=${NO_STAND}.`);
   }
   if (!response.ok) {
-    const known = await fetch(`${infraUrl}/stands.json`)
-      .then((list) => list.json() as Promise<string[]>)
-      .catch(() => []);
-    throw new Error(`PORTAL_STAND=${stand}: no such deployed stand (known: ${[...known, NO_STAND].join(', ')}).`);
+    throw new Error(`PORTAL_STAND=${stand}: ${url} → HTTP ${response.status}. Stands are listed in the registry (stands.json).`);
   }
   const config: unknown = await response.json();
   if (!isStandConfig(config)) {
@@ -112,31 +111,70 @@ const buildDevConfig = async (devEnv: DevEnv, warn: (message: string) => void): 
   return config;
 };
 
+/** CSP of the dev server: local dev servers, plus the origins the stand's remotes are served from (its Nexus). */
+const devContentSecurityPolicy = (remoteOrigins: readonly string[]) => {
+  const remotes = ['http://localhost:*', ...remoteOrigins].join(' ');
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'unsafe-inline' ${remotes}`,
+    `connect-src 'self' ${remotes} ws://localhost:*`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data:",
+  ].join('; ');
+};
+
+const remoteOriginsOf = (config: StandConfig): string[] => [
+  ...new Set(
+    Object.values(config.remotes)
+      .flatMap((entry) => [entry['manifest'], entry['bridgeManifest']])
+      .filter((url): url is string => typeof url === 'string')
+      .map((url) => new URL(url).origin),
+  ),
+];
+
+/**
+ * Serves `/config.json` (the stand's, plus local remotes) and the matching CSP. `vite` and `vite preview` alike: a
+ * production build previews against the same stand.
+ */
+const serveStandConfig = async ({ middlewares, config }: Pick<ViteDevServer | PreviewServer, 'middlewares' | 'config'>) => {
+  // Shell variables override the file. Validated once at start: a typo stops the server with the offending key.
+  const devEnv = parseDevEnv({ ...loadEnv('development', appDir, 'PORTAL_'), ...process.env });
+  const warned = new Set<string>();
+  const warnOnce = (message: string) => {
+    if (!warned.has(message)) {
+      warned.add(message);
+      config.logger.warn(`[portal] ${message}`);
+    }
+  };
+  // Read once at start for the CSP: a stand's remotes come from one Nexus origin, which does not change at runtime.
+  const remoteOrigins = await fetchStandConfig(devEnv)
+    .then(remoteOriginsOf)
+    .catch((error: unknown) => {
+      warnOnce(`${String(error)} — the host shows this error until the stand is reachable.`);
+      return [];
+    });
+  const contentSecurityPolicy = devContentSecurityPolicy(remoteOrigins);
+  middlewares.use((_request, response, next) => {
+    response.setHeader('Content-Security-Policy', contentSecurityPolicy);
+    next();
+  });
+  middlewares.use('/config.json', (_request, response) => {
+    buildDevConfig(devEnv, warnOnce)
+      .then((standConfig) => {
+        response.setHeader('Content-Type', 'application/json');
+        response.end(JSON.stringify(standConfig));
+      })
+      .catch((error: unknown) => {
+        response.statusCode = 502;
+        response.end(String(error));
+      });
+  });
+};
+
 const devConfigPlugin = (): Plugin => ({
   name: 'portal-dev-config',
-  apply: 'serve',
-  configureServer(server) {
-    // Shell variables override the file. Validated once at start: a typo stops the dev server with the offending key.
-    const devEnv = parseDevEnv({ ...loadEnv('development', appDir, 'PORTAL_'), ...process.env });
-    const warned = new Set<string>();
-    const warnOnce = (message: string) => {
-      if (!warned.has(message)) {
-        warned.add(message);
-        server.config.logger.warn(`[portal] ${message}`);
-      }
-    };
-    server.middlewares.use('/config.json', (_request, response) => {
-      buildDevConfig(devEnv, warnOnce)
-        .then((config) => {
-          response.setHeader('Content-Type', 'application/json');
-          response.end(JSON.stringify(config));
-        })
-        .catch((error: unknown) => {
-          response.statusCode = 502;
-          response.end(String(error));
-        });
-    });
-  },
+  configureServer: serveStandConfig,
+  configurePreviewServer: serveStandConfig,
 });
 
 /**
@@ -162,21 +200,11 @@ const devRefreshHookPlugin = (): Plugin => ({
   transformIndexHtml: () => [{ tag: 'script', injectTo: 'head-prepend', children: RECORDING_DEVTOOLS_HOOK }],
 });
 
-/** Dev CSP: remotes come from local dev servers and the local Nexus stand-in. Stands set their own (one origin). */
-const devContentSecurityPolicy = [
-  "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' http://localhost:*",
-  "connect-src 'self' http://localhost:* ws://localhost:*",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data:",
-].join('; ');
-
 export default createHostViteConfig({
   port: PORT,
   configUrl: import.meta.url,
   plugins: [hostCompatPlugin(), devConfigPlugin(), devRefreshHookPlugin()],
   extend: {
-    server: { strictPort: true, headers: { 'Content-Security-Policy': devContentSecurityPolicy } },
-    preview: { headers: { 'Content-Security-Policy': devContentSecurityPolicy } },
+    server: { strictPort: true },
   },
 });

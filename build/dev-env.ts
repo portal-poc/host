@@ -4,18 +4,19 @@ import { z } from 'zod';
 export const NO_STAND = 'none';
 
 const REMOTE_KEY = /^PORTAL_REMOTE_([A-Z][A-Z0-9_]*)$/;
-const KNOWN_KEYS = new Set(['PORTAL_STAND', 'PORTAL_INFRA_URL']);
-/** Read by portal-cli / PoC infra, may be exported in the same shell: not ours, not typos. */
+const KNOWN_KEYS = new Set(['PORTAL_STAND', 'PORTAL_STAND_URL']);
+/** Read by portal-cli, may be exported in the same shell: not ours, not typos. */
 const TOOLING_KEYS = new Set([
-  'PORTAL_INFRA_DIR',
   'PORTAL_NEXUS_URL',
   'PORTAL_NEXUS_USER',
   'PORTAL_NEXUS_PASSWORD',
   'PORTAL_REGISTRY_DIR',
-  'PORTAL_HOST_DIR',
   'PORTAL_REGISTRY',
   'PORTAL_APP_VERSION',
 ]);
+
+/** Where the PoC stands are served; `PORTAL_STAND_URL` points elsewhere (another domain, a stand behind a VPN). */
+const standUrlOf = (stand: string) => `https://${stand}.poc.ashirokov.dev`;
 
 const standSchema = z
   .string()
@@ -26,7 +27,8 @@ const manifestSchema = z.url().refine((value) => value.endsWith('/mf-manifest.js
 
 export type DevEnv = {
   stand: string;
-  infraUrl: string;
+  /** The deployed stand underneath (its `/config.json`); null with `PORTAL_STAND=none`. */
+  standUrl: string | null;
   /** Remote name (kebab-case, as in the registry) → dev server manifest URL. */
   remotes: Record<string, string>;
 };
@@ -49,7 +51,7 @@ export const parseDevEnv = (env: Record<string, string | undefined>): DevEnv => 
     }
     const suffix = REMOTE_KEY.exec(key)?.[1];
     if (!suffix) {
-      problems.push(`${key}: unknown variable (expected PORTAL_STAND, PORTAL_INFRA_URL or PORTAL_REMOTE_<NAME>)`);
+      problems.push(`${key}: unknown variable (expected PORTAL_STAND, PORTAL_STAND_URL or PORTAL_REMOTE_<NAME>)`);
       continue;
     }
     const manifest = manifestSchema.safeParse(value);
@@ -64,13 +66,14 @@ export const parseDevEnv = (env: Record<string, string | undefined>): DevEnv => 
   if (!stand.success) {
     problems.push(`PORTAL_STAND=${env['PORTAL_STAND'] ?? ''}: ${z.prettifyError(stand.error)}`);
   }
-  const infraUrl = z.url().default('http://localhost:4400').safeParse(env['PORTAL_INFRA_URL'] || undefined);
-  if (!infraUrl.success) {
-    problems.push(`PORTAL_INFRA_URL: ${z.prettifyError(infraUrl.error)}`);
+  const standUrl = z.url().optional().safeParse(env['PORTAL_STAND_URL'] || undefined);
+  if (!standUrl.success) {
+    problems.push(`PORTAL_STAND_URL: ${z.prettifyError(standUrl.error)}`);
   }
 
-  if (problems.length > 0 || !stand.success || !infraUrl.success) {
+  if (problems.length > 0 || !stand.success || !standUrl.success) {
     throw new Error(`Invalid local dev env (.env.development.local):\n${problems.map((line) => `  - ${line}`).join('\n')}`);
   }
-  return { stand: stand.data, infraUrl: infraUrl.data, remotes };
+  const url = stand.data === NO_STAND ? null : (standUrl.data ?? standUrlOf(stand.data));
+  return { stand: stand.data, standUrl: url?.replace(/\/$/, '') ?? null, remotes };
 };

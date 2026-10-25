@@ -4,8 +4,13 @@ import { parseDevEnv, toRemoteName } from './dev-env';
 const TASKS = 'http://localhost:5174/mf-manifest.json';
 
 describe('parseDevEnv', () => {
-  it('defaults to dev3 and the local infra', () => {
-    expect(parseDevEnv({})).toEqual({ stand: 'dev3', infraUrl: 'http://localhost:4400', remotes: {} });
+  it('defaults to the hosted dev3 stand', () => {
+    expect(parseDevEnv({})).toEqual({ stand: 'dev3', standUrl: 'https://dev3.poc.ashirokov.dev', remotes: {} });
+  });
+
+  it('takes the stand address from PORTAL_STAND_URL, and none without a stand', () => {
+    expect(parseDevEnv({ PORTAL_STAND: 'dev1', PORTAL_STAND_URL: 'https://dev1.example/' }).standUrl).toBe('https://dev1.example');
+    expect(parseDevEnv({ PORTAL_STAND: 'none' }).standUrl).toBeNull();
   });
 
   it('collects local remotes under their registry names', () => {
@@ -23,6 +28,8 @@ describe('parseDevEnv', () => {
     [{ PORTAL_REMOTE_TASKS: 'localhost:5174' }, 'PORTAL_REMOTE_TASKS=localhost:5174'],
     [{ PORTAL_REMOTE_TASKS: 'http://localhost:5174/' }, 'must end with /mf-manifest.json'],
     [{ PORTAL_STAND: 'UAT' }, 'PORTAL_STAND=UAT'],
+    [{ PORTAL_STAND_URL: 'dev3.poc' }, 'PORTAL_STAND_URL'],
+    [{ PORTAL_INFRA_URL: 'http://localhost:4400' }, 'PORTAL_INFRA_URL: unknown variable'],
   ])('rejects %o', (env, message) => {
     expect(() => parseDevEnv(env)).toThrow(message);
   });

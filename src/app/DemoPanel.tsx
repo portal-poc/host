@@ -16,7 +16,7 @@ const reloadWith = (key: string, value: string | null) => {
   window.location.reload();
 };
 
-/** Dev-only switches for the demo scenarios (docs/demo.md). */
+/** Switches for the demo scenarios (docs/demo.md); shown where `isDemoEnabled`. */
 export const DemoPanel = () => {
   const [isOpen, setIsOpen] = useState(false);
   const account = useSyncExternalStore(hostAuth.subscribe, hostAuth.getAccount);

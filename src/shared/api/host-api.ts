@@ -2,10 +2,9 @@ import type { QueryClient } from '@tanstack/react-query';
 import { create } from 'axios';
 import { attachPlatformAuth } from '@portal-poc/http';
 import { createPortalQueryClient, createQueryDevtoolsMount } from '@portal-poc/platform-runtime';
+import { getHostBffTarget, getHostConfig } from '../config';
 import { devtoolsRegistry, getHostPlatform } from '../platform';
 import { fakeHostFetch } from './fake-backend';
-
-const HOST_BFF_SCOPES = ['api://host-bff/Host.Read'] as const;
 
 /**
  * The host's own client to host-bff: axios bound to the host's login like every app's (`@portal-poc/http`). The host
@@ -13,7 +12,7 @@ const HOST_BFF_SCOPES = ['api://host-bff/Host.Read'] as const;
  */
 export const hostHttp = attachPlatformAuth(create({ timeout: 15_000, adapter: 'fetch', env: { fetch: fakeHostFetch } }), {
   platform: getHostPlatform,
-  target: () => ({ baseUrl: 'https://host-bff.local/api', scopes: HOST_BFF_SCOPES }),
+  target: () => getHostBffTarget(getHostConfig().env),
   clientVersion: `host@${PORTAL_HOST_COMPAT.hostVersion}`,
 });
 
