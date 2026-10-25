@@ -3,7 +3,7 @@ import { Outlet, useNavigation } from 'react-router';
 import { Box, Button, Sheet, Spinner, Stack, Typography } from '@portal-poc/ds';
 import { DevtoolsToolbar, useClearCacheOnAccountChange } from '@portal-poc/platform-runtime';
 import { useInvalidateBookmarksOnEvent } from '@/pages/home';
-import { getHostHttp, getHostQueryClient } from '@/shared/api';
+import { getHostQueryClient } from '@/shared/api';
 import { getRemoteSections } from '@/shared/config';
 import { devtoolsRegistry, getHostPlatform, hostAuth } from '@/shared/platform';
 import { QueryBoundary } from '@/shared/ui';
@@ -26,7 +26,7 @@ const SignedOut = () => {
 
 export const Layout = () => {
   useClearCacheOnAccountChange(getHostPlatform(), getHostQueryClient);
-  useInvalidateBookmarksOnEvent(getHostHttp());
+  useInvalidateBookmarksOnEvent();
   const account = useSyncExternalStore(hostAuth.subscribe, hostAuth.getAccount);
   // Optimistic router state (`useTransitions`): stays non-idle while the target suspends (e.g. remote loading).
   const isNavigating = useNavigation().state !== 'idle';

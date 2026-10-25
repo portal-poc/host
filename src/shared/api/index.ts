@@ -1,1 +1,1 @@
-export { getHostHttp, getHostQueryClient } from './host-api';
+export { getHostQueryClient, hostHttp } from './host-api';

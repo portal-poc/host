@@ -1,17 +1,18 @@
 import { queryOptions, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { z } from 'zod';
-import type { HttpClient } from '@portal-poc/platform-runtime';
+import { parseResponse } from '@portal-poc/http';
 import { usePlatformEvents } from '@portal-poc/platform-runtime';
+import { hostHttp } from '@/shared/api';
 
 const bookmarkSchema = z.object({ taskId: z.string(), title: z.string(), path: z.string(), source: z.string() });
 
 export type Bookmark = z.output<typeof bookmarkSchema>;
 
-export const bookmarksOptions = (http: HttpClient) =>
+export const bookmarksOptions = () =>
   queryOptions({
     queryKey: ['host', 'bookmarks'],
-    queryFn: ({ signal }) => http.get('/bookmarks', z.array(bookmarkSchema), { signal }),
+    queryFn: ({ signal }) => hostHttp.get('/bookmarks', { signal }).then(parseResponse(z.array(bookmarkSchema))),
   });
 
 /**
@@ -20,10 +21,10 @@ export const bookmarksOptions = (http: HttpClient) =>
  * so the widget refetches on its next mount. Realtime is out of scope: remotes announce changes on the local bus;
  * `refetchOnWindowFocus` covers other tabs.
  */
-export const useInvalidateBookmarksOnEvent = (http: HttpClient) => {
+export const useInvalidateBookmarksOnEvent = () => {
   const events = usePlatformEvents();
   const queryClient = useQueryClient();
-  const { queryKey } = bookmarksOptions(http);
+  const { queryKey } = bookmarksOptions();
 
   useEffect(
     () =>

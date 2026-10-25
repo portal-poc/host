@@ -1,24 +1,21 @@
 import type { QueryClient } from '@tanstack/react-query';
-import { createHttpClient, createPortalQueryClient, createQueryDevtoolsMount } from '@portal-poc/platform-runtime';
+import { create } from 'axios';
+import { attachPlatformAuth } from '@portal-poc/http';
+import { createPortalQueryClient, createQueryDevtoolsMount } from '@portal-poc/platform-runtime';
 import { devtoolsRegistry, getHostPlatform } from '../platform';
 import { fakeHostFetch } from './fake-backend';
 
 const HOST_BFF_SCOPES = ['api://host-bff/Host.Read'] as const;
 
-let http: ReturnType<typeof createHttpClient> | null = null;
-
-export const getHostHttp = () => {
-  const platform = getHostPlatform();
-  http ??= createHttpClient({
-    baseUrl: 'https://host-bff.local/api',
-    scopes: HOST_BFF_SCOPES,
-    auth: platform.auth,
-    telemetry: platform.telemetry,
-    clientVersion: `host@${PORTAL_HOST_COMPAT.hostVersion}`,
-    fetch: fakeHostFetch, // PoC: hard-coded backend
-  });
-  return http;
-};
+/**
+ * The host's own client to host-bff: axios bound to the host's login like every app's (`@portal-poc/http`). The host
+ * platform is a module-level value already, so no binding. PoC: answered by the fake host-bff (axios' fetch adapter).
+ */
+export const hostHttp = attachPlatformAuth(create({ timeout: 15_000, adapter: 'fetch', env: { fetch: fakeHostFetch } }), {
+  platform: getHostPlatform,
+  target: () => ({ baseUrl: 'https://host-bff.local/api', scopes: HOST_BFF_SCOPES }),
+  clientVersion: `host@${PORTAL_HOST_COMPAT.hostVersion}`,
+});
 
 let queryClient: QueryClient | null = null;
 
