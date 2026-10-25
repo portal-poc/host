@@ -31,4 +31,9 @@ gives only your local remotes, without infra. Local development never touches th
 The dev server validates these variables at start (`build/dev-env.ts`): unknown `PORTAL_*` keys, non-manifest URLs
 and bad stand names stop it with the offending line; a remote missing on the stand is reported as a warning.
 
-Deploy to the PoC stands: `pnpm build`, then in `platform`: `pnpm deploy:host dev3` (dev2, dev1, tst).
+## Deploy
+
+Actions → **Deploy** → Run workflow: pick the stand (`dev3`, `dev2`, `dev1`, `tst`) and the branch or tag. The build
+is checked against every remote registered on that stand (`portal-cli registry check`); if one would break, the stand
+keeps its current host. Otherwise it is uploaded to Nexus (`portal-stands/<stand>/host/`) and served at
+`https://<stand>.poc.ashirokov.dev` on the next page load. The stand's remotes (its `/config.json`) are not touched.

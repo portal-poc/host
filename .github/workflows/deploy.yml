@@ -1,0 +1,25 @@
+name: Deploy
+# Pick the stand and the branch or tag, press "Run workflow". The build replaces the stand's host only if every remote
+# registered on that stand still works with it (registry check): see README "Deploy".
+on:
+  workflow_dispatch:
+    inputs:
+      stand:
+        description: Stand
+        type: choice
+        options: [dev3, dev2, dev1, tst]
+      ref:
+        description: Branch or tag
+        default: main
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  deploy:
+    uses: portal-poc/platform/.github/workflows/deploy-host.yml@v2
+    with:
+      stand: ${{ inputs.stand }}
+      ref: ${{ inputs.ref }}
+    secrets: inherit
