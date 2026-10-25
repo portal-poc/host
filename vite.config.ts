@@ -103,7 +103,9 @@ const buildDevConfig = async (devEnv: DevEnv, warn: (message: string) => void): 
   for (const [name, manifest] of Object.entries(devEnv.remotes)) {
     let entry = config.remotes[name];
     if (!entry) {
-      warn(`"${name}" is not registered on ${devEnv.stand} (registered: ${registered}): added as a new remote at /${name}.`);
+      if (devEnv.standUrl) {
+        warn(`"${name}" is not registered on ${devEnv.stand} (registered: ${registered}): added as a new remote at /${name}.`);
+      }
       entry = await describeUnregisteredRemote(name, manifest, config.env);
     }
     config.remotes[name] = { ...entry, version: 'local', manifest, devServer: true, bridgeManifest: undefined };
