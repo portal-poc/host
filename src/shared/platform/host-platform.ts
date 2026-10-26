@@ -1,5 +1,6 @@
 import { PLATFORM_CONTRACT_VERSION } from '@portal-poc/platform-contract';
 import type { PlatformContract, PlatformLocale } from '@portal-poc/platform-contract';
+import type { DevtoolsRegistry } from '@portal-poc/platform-runtime';
 import {
   createConsoleTelemetry,
   createDevtoolsRegistry,
@@ -32,7 +33,22 @@ const hostNavigation = createLeaveGuards({ ask: leaveDialog.ask, notifyLocked: l
 /** A guard holds the page: a reload now would make the browser ask (and could be cancelled). */
 export const hasLeaveGuards = (): boolean => hostNavigation.hasGuards();
 
-export const devtoolsRegistry = isDevtoolsEnabled(import.meta.env.DEV) ? createDevtoolsRegistry() : null;
+/** Stands where the devtools toolbar is on by default: the developers' snapshot stand (the PoC shows it there). */
+const DEVTOOLS_STANDS = new Set(['dev3']);
+
+let devtoolsRegistry: DevtoolsRegistry | null | undefined;
+
+/**
+ * The devtools registry, or null where the toolbar is off: on by default on the dev server and on dev3, elsewhere
+ * behind `?devtools=1` / `localStorage['portal.devtools'] = '1'`. Decided once, after the stand config is loaded.
+ */
+export const getDevtoolsRegistry = (): DevtoolsRegistry | null => {
+  if (devtoolsRegistry === undefined) {
+    const onByDefault = import.meta.env.DEV || DEVTOOLS_STANDS.has(getHostConfig().env);
+    devtoolsRegistry = isDevtoolsEnabled(onByDefault) ? createDevtoolsRegistry() : null;
+  }
+  return devtoolsRegistry;
+};
 
 const locale: PlatformLocale = { language: 'en', subscribe: () => () => {} };
 
@@ -47,17 +63,20 @@ export const setHostNavigate = (navigate: (path: string) => void) => {
   navigateToHost = navigate;
 };
 
-const buildBase = (app: string): Omit<PlatformContract, 'auth'> => ({
-  contractVersion: PLATFORM_CONTRACT_VERSION,
-  env: { name: getHostConfig().env, hostOrigin: window.location.origin },
-  events: hostEvents,
-  telemetry: createTelemetry(app),
-  locale,
-  navigation: hostNavigation,
-  // Per app: the layout shows the title of the section on screen.
-  document: { setTitle: (title) => pageTitles.set(app, title) },
-  ...(devtoolsRegistry ? { devtools: devtoolsRegistry } : {}),
-});
+const buildBase = (app: string): Omit<PlatformContract, 'auth'> => {
+  const devtools = getDevtoolsRegistry();
+  return {
+    contractVersion: PLATFORM_CONTRACT_VERSION,
+    env: { name: getHostConfig().env, hostOrigin: window.location.origin },
+    events: hostEvents,
+    telemetry: createTelemetry(app),
+    locale,
+    navigation: hostNavigation,
+    // Per app: the layout shows the title of the section on screen.
+    document: { setTitle: (title) => pageTitles.set(app, title) },
+    ...(devtools ? { devtools } : {}),
+  };
+};
 
 let hostPlatform: PlatformContract | null = null;
 

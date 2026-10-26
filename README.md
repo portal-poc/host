@@ -30,7 +30,7 @@ transitions, devtools toolbar, demo panel, reload of tabs left on a cleaned-up b
 | What | Where |
 |---|---|
 | Demo panel: mock accounts, BFF delay, forced bridge, incompatible contract | dev server and dev stands; `tst` with `?demo=1` (`?demo=0` hides) |
-| Devtools + remotes panel | dev server; stands with `?devtools=1` or `localStorage['portal.devtools'] = '1'` |
+| Devtools + remotes panel | dev server and dev3 always; other stands with `?devtools=1` or `localStorage['portal.devtools'] = '1'` |
 | Which build runs | remotes panel, `compat.json` (`hostVersion`, `commit`, singletons, contract range) at the stand root |
 
 **Files a stand serves** (`portal-stands/<stand>/`): the host build, `compat.json` (what this host provides; remotes
@@ -92,7 +92,7 @@ never touches the registry. The dev server validates these variables at start (`
 is reported as a warning. `pnpm build && pnpm preview` runs the production build the same way.
 
 Demo panel (mock accounts, BFF delay, forced bridge, incompatible contract): on the dev server and the dev stands;
-on `tst` only with `?demo=1` (remembered in the browser, `?demo=0` hides it). Devtools: `?devtools=1`.
+on `tst` only with `?demo=1` (remembered in the browser, `?demo=0` hides it). Devtools: always on the dev server and dev3, elsewhere `?devtools=1`.
 
 ## Deploy
 

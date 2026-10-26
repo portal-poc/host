@@ -1,7 +1,7 @@
 export { DEMO_KEYS, isDemoEnabled, readFlag, writeFlag } from './demo-flags';
 export {
   buildPlatformForRemote,
-  devtoolsRegistry,
+  getDevtoolsRegistry,
   getHostPlatform,
   hasLeaveGuards,
   hostAuth,

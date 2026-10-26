@@ -3,7 +3,7 @@ import { create } from 'axios';
 import { attachPlatformAuth } from '@portal-poc/http';
 import { createPortalQueryClient, createQueryDevtoolsMount } from '@portal-poc/platform-runtime';
 import { getHostBffTarget, getHostConfig } from '../config';
-import { devtoolsRegistry, getHostPlatform } from '../platform';
+import { getDevtoolsRegistry, getHostPlatform } from '../platform';
 import { fakeHostFetch } from './fake-backend';
 
 /**
@@ -22,7 +22,7 @@ let queryClient: QueryClient | null = null;
 export const getHostQueryClient = (): QueryClient => {
   if (!queryClient) {
     queryClient = createPortalQueryClient({ telemetry: getHostPlatform().telemetry });
-    devtoolsRegistry?.registerPanel('host', createQueryDevtoolsMount(queryClient));
+    getDevtoolsRegistry()?.registerPanel('host', createQueryDevtoolsMount(queryClient));
   }
   return queryClient;
 };

@@ -6,7 +6,7 @@ import { PlatformLeaveBlocker } from '@portal-poc/platform-runtime/router';
 import { useInvalidateBookmarksOnEvent } from '@/pages/home';
 import { getHostQueryClient } from '@/shared/api';
 import { getHostConfig, getRemoteSections } from '@/shared/config';
-import { devtoolsRegistry, getHostPlatform, hostAuth, isDemoEnabled } from '@/shared/platform';
+import { getDevtoolsRegistry, getHostPlatform, hostAuth, isDemoEnabled } from '@/shared/platform';
 import { QueryBoundary } from '@/shared/ui';
 import { DemoPanel } from './DemoPanel';
 import { HostNavLink } from './HostNavLink';
@@ -34,6 +34,7 @@ export const Layout = () => {
   const account = useSyncExternalStore(hostAuth.subscribe, hostAuth.getAccount);
   // Optimistic router state (`useTransitions`): stays non-idle while the target suspends (e.g. remote loading).
   const isNavigating = useNavigation().state !== 'idle';
+  const devtools = getDevtoolsRegistry();
 
   return (
     <Box>
@@ -66,7 +67,7 @@ export const Layout = () => {
         )}
       </Box>
       {isDemoEnabled(getHostConfig().env) && <DemoPanel />}
-      {devtoolsRegistry && <DevtoolsToolbar registry={devtoolsRegistry} extra={<RemotesInfo />} />}
+      {devtools && <DevtoolsToolbar registry={devtools} extra={<RemotesInfo />} />}
     </Box>
   );
 };
