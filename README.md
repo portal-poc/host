@@ -1,5 +1,7 @@
 # host
 
+> Part of the portal PoC. Start at the [platform README](https://github.com/portal-poc/platform#readme) — how all pieces interact: [overview](https://github.com/portal-poc/platform/blob/main/docs/overview.md).
+
 Portal host: data router (React Router v8), stand config read at runtime (`/config.json`), remotes loaded by
 manifest with compatibility checks (contract, singletons, build tooling) and bridge fallback, host-owned route view
 transitions, devtools toolbar, demo panel, reload of tabs left on a cleaned-up build. Builds with
